@@ -1,0 +1,95 @@
+<!-- src/app/features/auth/login/login.component.html -->
+<div class="login-container">
+  <div class="login-card">
+
+    <!-- Panel de marca -->
+    <div class="brand-panel">
+      <div class="mesh">
+        <div *ngFor="let c of meshCells" [ngClass]="c"></div>
+      </div>
+      <div class="brand-top">
+        <p class="brand-eyebrow">Gestión académica inteligente</p>
+        <h1 class="brand-title">Unidad Educativa<br />Si Miao Wei Hua</h1>
+        <p class="brand-sub">
+          Cursos, docentes, asignaturas y horarios en un solo sistema, con generación
+          automática de horarios mediante algoritmo genético.
+        </p>
+      </div>
+      <div class="brand-bottom">
+        <div class="brand-tags">
+          <span class="brand-tag">Horarios · IA</span>
+          <span class="brand-tag">Consultas · Chatbot</span>
+        </div>
+        <p class="brand-foot">© 2026 · Si Miao Wei Hua</p>
+      </div>
+    </div>
+
+    <!-- Panel de formulario -->
+    <div class="form-panel">
+      <p class="form-eyebrow">Acceso al sistema</p>
+      <h2 class="form-title">Iniciar sesión</h2>
+
+      <!-- Selector de rol: UI lista, aún no conectada al AuthService -->
+      
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <div class="field">
+          <label for="usuario">Usuario</label>
+          <input
+            type="text"
+            id="usuario"
+            name="usuario"
+            [(ngModel)]="usuario"
+            #usuarioInput="ngModel"
+            required
+            placeholder="Ingresa tu usuario"
+            class="form-control"
+            [class.is-invalid]="usuarioInput.invalid && usuarioInput.touched"
+          />
+          <div *ngIf="usuarioInput.invalid && usuarioInput.touched" class="invalid-feedback">
+            El usuario es obligatorio
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="input-wrap">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="password"
+              #passwordInput="ngModel"
+              required
+              placeholder="Ingresa tu contraseña"
+              class="form-control"
+              [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
+            />
+            <button type="button" class="icon-btn" (click)="showPassword = !showPassword">
+              {{ showPassword ? 'ocultar' : 'ver' }}
+            </button>
+          </div>
+          <div *ngIf="passwordInput.invalid && passwordInput.touched" class="invalid-feedback">
+            La contraseña es obligatoria
+          </div>
+        </div>
+
+        <div class="row-between">
+          <a class="link-muted" href="#">Olvidaste tu contraseña</a>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border"></span>
+          {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+        </button>
+      </form>
+
+      <p class="form-foot">Acceso restringido al personal autorizado de la institución</p>
+    </div>
+
+  </div>
+</div>

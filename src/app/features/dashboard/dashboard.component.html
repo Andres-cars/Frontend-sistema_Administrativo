@@ -1,0 +1,369 @@
+<!-- src/app/features/dashboard/dashboard.component.html -->
+
+<div class="dashboard-container">
+
+  <!-- =========================================
+       TOPBAR
+  ========================================== -->
+
+  <header class="topbar">
+
+    <div class="title-section">
+
+      <div class="title-icon">
+        📊
+      </div>
+
+      <div>
+        <h1>Dashboard</h1>
+        <p>Resumen general de la gestión académica</p>
+      </div>
+
+    </div>
+
+    <div class="top-actions">
+
+      <!-- BUSCADOR -->
+      <div class="search-box">
+
+        <span>🔍</span>
+
+        <input
+          type="text"
+          placeholder="Buscar docente, curso o asignatura"
+        >
+
+      </div>
+
+      <!-- USUARIO -->
+      <div class="user-chip">
+
+        <span class="user-icon">
+          👤
+        </span>
+
+        <span>
+          {{ usuario?.usuario || 'Usuario' }}
+        </span>
+
+      </div>
+
+      <!-- ROL -->
+      <span
+        class="role-badge"
+        [ngClass]="
+          usuario?.rol === 'ADMINISTRADOR'
+            ? 'role-admin'
+            : 'role-docente'
+        "
+      >
+        {{ usuario?.rol || 'USUARIO' }}
+      </span>
+
+      <!-- SALIR -->
+      <button
+        class="btn-logout"
+        (click)="logout()"
+      >
+        🚪 Salir
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       MÉTRICAS
+  ========================================== -->
+
+  <section class="metrics">
+
+    <!-- DOCENTES -->
+    <div class="metric-card docentes">
+
+      <div class="metric-top">
+
+        <div class="metric-icon">
+          👨‍🏫
+        </div>
+
+        <div class="metric-arrow">
+          →
+        </div>
+
+      </div>
+
+      <div class="metric-number">
+
+        @if (cargandoDocentes) {
+
+          <span class="loading-number">
+            ...
+          </span>
+
+        } @else {
+
+          <span>
+            {{ totalDocentes ?? '—' }}
+          </span>
+
+        }
+
+      </div>
+
+      <p class="metric-label">
+        Docentes registrados
+      </p>
+
+      <div class="metric-line"></div>
+
+    </div>
+
+
+    <!-- CURSOS -->
+    <div class="metric-card cursos">
+
+      <div class="metric-top">
+
+        <div class="metric-icon">
+          🏫
+        </div>
+
+        <div class="metric-arrow">
+          →
+        </div>
+
+      </div>
+
+      <div class="metric-number">
+        {{ totalCursos ?? '—' }}
+      </div>
+
+      <p class="metric-label">
+        Cursos activos
+      </p>
+
+      <div class="metric-line"></div>
+
+    </div>
+
+
+    <!-- ASIGNATURAS -->
+    <div class="metric-card asignaturas">
+
+      <div class="metric-top">
+
+        <div class="metric-icon">
+          📚
+        </div>
+
+        <div class="metric-arrow">
+          →
+        </div>
+
+      </div>
+
+      <div class="metric-number">
+        {{ totalAsignaturas ?? '—' }}
+      </div>
+
+      <p class="metric-label">
+        Asignaturas
+      </p>
+
+      <div class="metric-line"></div>
+
+    </div>
+
+
+    <!-- HORARIOS -->
+    <div class="metric-card horarios">
+
+      <div class="metric-top">
+
+        <div class="metric-icon">
+          📅
+        </div>
+
+        <div class="metric-arrow">
+          →
+        </div>
+
+      </div>
+
+      <div class="metric-number">
+        {{ totalHorarios ?? '—' }}
+      </div>
+
+      <p class="metric-label">
+        Horarios generados
+      </p>
+
+      <div class="metric-line"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       CONTENIDO PRINCIPAL
+  ========================================== -->
+
+  <section class="content-grid">
+
+    <!-- ACCESOS RÁPIDOS -->
+
+    <div class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2>Accesos rápidos</h2>
+
+          <p>
+            Accede rápidamente a los módulos principales
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="menu-grid">
+
+        @if (usuario?.rol === 'ADMINISTRADOR') {
+
+          <!-- DOCENTES -->
+
+          <div
+            class="menu-card"
+            (click)="irADocentes()"
+          >
+
+            <div class="menu-icon">
+              👨‍🏫
+            </div>
+
+            <div class="menu-content">
+
+              <h3>Docentes</h3>
+
+              <p>
+                Gestionar docentes
+              </p>
+
+            </div>
+
+            <span class="menu-arrow">
+              →
+            </span>
+
+          </div>
+
+
+          <!-- CURSOS -->
+
+          <div
+            class="menu-card"
+            (click)="irACursos()"
+          >
+
+            <div class="menu-icon">
+              🏫
+            </div>
+
+            <div class="menu-content">
+
+              <h3>Cursos</h3>
+
+              <p>
+                Gestionar cursos
+              </p>
+
+            </div>
+
+            <span class="menu-arrow">
+              →
+            </span>
+
+          </div>
+
+
+          <!-- ASIGNATURAS -->
+
+          <div
+            class="menu-card"
+            (click)="irAAsignaturas()"
+          >
+
+            <div class="menu-icon">
+              📚
+            </div>
+
+            <div class="menu-content">
+
+              <h3>Asignaturas</h3>
+
+              <p>
+                Gestionar asignaturas
+              </p>
+
+            </div>
+
+            <span class="menu-arrow">
+              →
+            </span>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- ACTIVIDAD -->
+
+    <div class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <h2>Actividad reciente</h2>
+
+          <p>
+            Últimos movimientos del sistema
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="activity-empty">
+
+        <div class="empty-icon">
+          📋
+        </div>
+
+        <h3>
+          Sin actividad todavía
+        </h3>
+
+        <p>
+          Las actividades recientes aparecerán
+          aquí cuando se conecte el módulo de auditoría.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

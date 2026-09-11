@@ -1,0 +1,80 @@
+<!-- src/app/features/cursos/lista-cursos/lista-cursos.component.html -->
+<div class="container">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Cursos</span>
+  </div>
+  <div class="d-flex">
+    <h2>📚 Lista de Cursos</h2>
+    @if (isAdmin) {
+      <button (click)="irACrear()" class="btn-primary">
+        ➕ Nuevo Curso
+      </button>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  @if (loading) {
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  }
+
+  @if (!loading && cursos.length > 0) {
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nivel</th>
+            <th>Grado</th>
+            <th>Paralelo</th>
+            <th>Nombre Completo</th>
+            @if (isAdmin) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (curso of cursos; track curso.id) {
+            <tr>
+              <td>{{ curso.id }}</td>
+              <td>{{ curso.nivel }}</td>
+              <td>{{ curso.grado }}</td>
+              <td>{{ curso.paralelo }}</td>
+              <td>
+                <span class="badge bg-primary">
+                  {{ curso.nivel }} {{ curso.grado }} "{{ curso.paralelo }}"
+                </span>
+              </td>
+              @if (isAdmin) {
+                <td>
+                  <button (click)="irAEditar(curso.id)" class="btn btn-warning me-1" title="Editar">
+                    ✏️
+                  </button>
+                  <button (click)="eliminarCurso(curso.id)" class="btn btn-danger" title="Eliminar">
+                    🗑️
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (!loading && cursos.length === 0) {
+    <div class="text-center py-5">
+      <p class="text-muted">📭 No hay cursos registrados</p>
+    </div>
+  }
+</div>

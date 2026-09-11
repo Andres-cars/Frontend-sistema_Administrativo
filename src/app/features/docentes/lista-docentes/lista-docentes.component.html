@@ -1,0 +1,121 @@
+<!-- src/app/features/docentes/lista-docentes/lista-docentes.component.html -->
+<div class="container">
+   <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Docentes</span>
+  </div>
+  <!-- TOAST DE ÉXITO -->
+@if (successMessage) {
+  <div class="success-toast">
+
+    <div class="success-icon">
+      ✓
+    </div>
+   
+  
+    
+   
+  
+
+    <div class="success-content">
+      <strong>¡Éxito!</strong>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <button
+      type="button"
+      class="toast-close"
+      (click)="successMessage = ''">
+      ×
+    </button>
+
+  </div>
+}
+  <!-- HEADER -->
+  <div class="d-flex">
+    <h2>👨‍🏫 Lista de Docentes</h2>
+    @if (isAdmin) {
+      <button (click)="irACrear()" class="btn-primary">
+        ➕ Nuevo Docente
+      </button>
+    }
+  </div>
+
+  <!-- ERROR -->
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <!-- LOADING -->
+  @if (loading) {
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  }
+
+  <!-- TABLA -->
+  @if (!loading && docentes.length > 0) {
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Identificación</th>
+            <th>Especialidad</th>
+            <th>Usuario</th>
+            @if (isAdmin) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (docente of docentes; track docente.id) {
+            <tr>
+              <td>{{ docente.id }}</td>
+              <td>{{ docente.nombres }}</td>
+              <td>{{ docente.apellidos }}</td>
+              <td>{{ docente.identificacion || '-' }}</td>
+              <td>{{ docente.especialidad || '-' }}</td>
+              <td>
+                @if (docente.usuario) {
+                  <span class="badge bg-success">
+                    {{ docente.usuario.usuario }}
+                  </span>
+                } @else {
+                  <span class="badge bg-secondary">
+                    Sin usuario
+                  </span>
+                }
+              </td>
+              @if (isAdmin) {
+                <td>
+                  <button (click)="irAEditar(docente.id)" class="btn btn-warning me-1" title="Editar">
+                    ✏️
+                  </button>
+                  <button (click)="eliminarDocente(docente.id)" class="btn btn-danger" title="Eliminar">
+                    🗑️
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  
+  <!-- SIN DATOS -->
+  @if (!loading && docentes.length === 0) {
+    <div class="text-center py-5">
+      <p class="text-muted">📭 No hay docentes registrados</p>
+    </div>
+  }
+
+</div>

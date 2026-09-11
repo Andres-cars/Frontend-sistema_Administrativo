@@ -1,0 +1,98 @@
+<!-- src/app/features/cursos/form-curso/form-curso.component.html -->
+<div class="container">
+   <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <button class="crumb-btn" (click)="cancelar()">Cursos</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ isEdit ? 'Editar' : 'Nuevo' }}</span>
+  </div>
+  <div class="card shadow">
+    <div class="card-header">
+      <h4>{{ isEdit ? '✏️ Editar Curso' : '➕ Nuevo Curso' }}</h4>
+    </div>
+    <div class="card-body">
+      
+      @if (errorMessage) {
+        <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success">✅ {{ successMessage }}</div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+        
+        <!-- Nivel -->
+        <div class="form-group">
+          <label class="form-label">Nivel <span class="required">*</span></label>
+          <select 
+            class="form-control" 
+            [(ngModel)]="curso.nivel" 
+            name="nivel"
+            required
+          >
+            <option value="">Seleccione un nivel</option>
+            @for (nivel of niveles; track nivel) {
+              <option [value]="nivel">{{ nivel }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Grado -->
+        <div class="form-group">
+          <label class="form-label">Grado <span class="required">*</span></label>
+          <select 
+            class="form-control" 
+            [(ngModel)]="curso.grado" 
+            name="grado"
+            required
+          >
+            <option value="">Seleccione un grado</option>
+            @for (grado of grados; track grado) {
+              <option [value]="grado">{{ grado }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Paralelo -->
+        <div class="form-group">
+          <label class="form-label">Paralelo <span class="required">*</span></label>
+          <select 
+            class="form-control" 
+            [(ngModel)]="curso.paralelo" 
+            name="paralelo"
+            required
+          >
+            <option value="">Seleccione un paralelo</option>
+            @for (paralelo of paralelos; track paralelo) {
+              <option [value]="paralelo">{{ paralelo }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- PREVIEW -->
+        @if (curso.nivel && curso.grado && curso.paralelo) {
+          <div class="preview">
+            <p>📋 <strong>Vista previa:</strong></p>
+            <span class="badge-preview">
+              {{ curso.nivel }} - {{ curso.grado }} "{{ curso.paralelo }}"
+            </span>
+          </div>
+        }
+
+        <!-- Botones -->
+        <div class="d-flex">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm"></span>
+            }
+            {{ loading ? 'Guardando...' : (isEdit ? '💾 Actualizar' : '➕ Crear') }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            ❌ Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

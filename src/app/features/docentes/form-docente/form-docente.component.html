@@ -1,0 +1,139 @@
+<!-- src/app/features/docentes/form-docente/form-docente.component.html -->
+<div class="container mt-4">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <button class="crumb-btn" (click)="cancelar()">Docentes</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ isEdit ? 'Editar' : 'Nuevo' }}</span>
+  </div>
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">{{ isEdit ? '✏️ Editar Docente' : '➕ Nuevo Docente' }}</h4>
+        </div>
+        <div class="card-body">
+          
+          <!-- Mensajes -->
+          @if (successMessage) {
+  <div class="success-toast">
+    <div class="success-icon">
+      ✓
+    </div>
+
+    <div class="success-content">
+      <strong>¡Éxito!</strong>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <button 
+      type="button" 
+      class="toast-close"
+      (click)="successMessage = ''">
+      ×
+    </button>
+  </div>
+}
+
+          <form (ngSubmit)="onSubmit()">
+            
+            <!-- Nombres -->
+            <div class="mb-3">
+              <label class="form-label">Nombres *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="docente.nombres" 
+                name="nombres"
+                required
+                placeholder="Ej: María"
+              >
+            </div>
+
+            <!-- Apellidos -->
+            <div class="mb-3">
+              <label class="form-label">Apellidos *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="docente.apellidos" 
+                name="apellidos"
+                required
+                placeholder="Ej: Gómez Pérez"
+              >
+            </div>
+
+            <!-- Identificación -->
+            <div class="mb-3">
+              <label class="form-label">Identificación</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="docente.identificacion" 
+                name="identificacion"
+                placeholder="Ej: 1234567890"
+              >
+            </div>
+
+            <!-- Especialidad -->
+            <div class="mb-3">
+              <label class="form-label">Especialidad</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="docente.especialidad" 
+                name="especialidad"
+                placeholder="Ej: Matemáticas"
+              >
+            </div>
+
+            @if (!isEdit) {
+              <hr>
+              <h5 class="mb-3">🔐 Datos de Usuario (Opcional)</h5>
+
+              <!-- Usuario (solo para nuevos) -->
+              <div class="mb-3">
+                <label class="form-label">Usuario (para login)</label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  [(ngModel)]="docente.usuario" 
+                  name="usuario"
+                  placeholder="Ej: maria.gomez"
+                >
+                <small class="text-muted">Dejar en blanco si no se necesita usuario</small>
+              </div>
+
+              <!-- Contraseña (solo para nuevos) -->
+              <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  [(ngModel)]="docente.password" 
+                  name="password"
+                  placeholder="Mínimo 6 caracteres"
+                >
+                <small class="text-muted">Requerida si se crea un usuario</small>
+              </div>
+            }
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-primary" [disabled]="loading">
+                @if (loading) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+                {{ loading ? 'Guardando...' : (isEdit ? 'Actualizar' : 'Crear') }}
+              </button>
+              <button type="button" class="btn btn-secondary" (click)="cancelar()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

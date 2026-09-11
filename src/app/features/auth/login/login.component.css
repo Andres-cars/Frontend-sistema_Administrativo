@@ -1,0 +1,351 @@
+/* src/app/features/auth/login/login.component.css */
+
+/*
+  Estas 3 fuentes deben cargarse UNA sola vez para toda la app,
+  no aquí. Agrega esto en src/index.html dentro de <head>:
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+*/
+
+:host {
+  --rojo: #A91B2E;
+  --rojo-oscuro: #6E0F1E;
+  --rojo-tinta: #4A0A14;
+  --tinta: #1A1A1F;
+  --slate: #5B5D66;
+  --slate-light: #8C8E96;
+  --papel: #F6F4EF;
+  --linea: #E4E1D8;
+  --oro: #B8860B;
+  display: block;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--papel);
+  margin: 0;
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 1040px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 1px 2px rgba(26, 26, 31, 0.04), 0 12px 32px rgba(26, 26, 31, 0.08);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+@media (max-width: 820px) {
+  .login-card {
+    grid-template-columns: 1fr;
+  }
+  .brand-panel {
+    display: none;
+  }
+}
+
+/* ---------- Panel de marca ---------- */
+.brand-panel {
+  position: relative;
+  background: linear-gradient(165deg, var(--rojo) 0%, var(--rojo-oscuro) 62%, var(--rojo-tinta) 100%);
+  color: #fff;
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.mesh {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(14, 1fr);
+  opacity: 0.5;
+}
+
+.mesh div {
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.mesh div.on {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mesh div.on2 {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.brand-top {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 14px;
+}
+
+.brand-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.25;
+  margin: 0 0 12px;
+}
+
+.brand-sub {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 320px;
+  margin: 0;
+}
+
+.brand-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.brand-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.brand-foot {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.2);
+  padding-top: 16px;
+  margin: 0;
+}
+
+/* ---------- Panel de formulario ---------- */
+.form-panel {
+  padding: 52px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.form-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--slate-light);
+  margin: 0 0 8px;
+}
+
+.form-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  margin: 0 0 26px;
+  color: var(--tinta);
+}
+
+.role-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+
+.role-pill {
+  flex: 1;
+  border: 1px solid var(--linea);
+  background: #fff;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.role-pill:hover {
+  border-color: var(--rojo);
+}
+
+.role-pill.active {
+  background: var(--rojo);
+  border-color: var(--rojo);
+  color: #fff;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--slate);
+  margin-bottom: 6px;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-control {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--linea);
+  background: var(--papel);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  color: var(--tinta);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.input-wrap .form-control {
+  padding-right: 46px;
+}
+
+.form-control:focus {
+  border-color: var(--rojo);
+  background: #fff;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.icon-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--slate-light);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.row-between {
+  display: flex;
+  justify-content: flex-end;
+  margin: 2px 0 22px;
+}
+
+.link-muted {
+  font-size: 12.5px;
+  color: var(--rojo);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link-muted:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+
+.alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--rojo);
+  color: #fff;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--rojo-oscuro);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form-foot {
+  margin-top: 22px;
+  font-size: 12px;
+  color: var(--slate-light);
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .form-panel {
+    padding: 32px 24px;
+  }
+}
