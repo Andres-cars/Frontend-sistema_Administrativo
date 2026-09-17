@@ -1,0 +1,80 @@
+<!-- src/app/features/asignaturas/form-asignatura/form-asignatura.component.html -->
+<div class="container">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <button class="crumb-btn" (click)="cancelar()">Asignaturas</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ isEdit ? 'Editar' : 'Nueva' }}</span>
+  </div>
+  <div class="card shadow">
+    <div class="card-header">
+      <h4>{{ isEdit ? '✏️ Editar Asignatura' : '➕ Nueva Asignatura' }}</h4>
+    </div>
+    <div class="card-body">
+      
+      @if (errorMessage) {
+        <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success">✅ {{ successMessage }}</div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+        
+        <!-- Nombre -->
+        <div class="form-group">
+          <label class="form-label">Nombre <span class="required">*</span></label>
+          <input 
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="asignatura.nombre" 
+            name="nombre"
+            required
+            placeholder="Ej: Matemáticas"
+          >
+        </div>
+
+        <!-- Código -->
+        <div class="form-group">
+          <label class="form-label">Código</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="asignatura.codigo" 
+            name="codigo"
+            placeholder="Ej: MAT-101"
+          >
+        </div>
+
+        <!-- Horas Semanales -->
+        <div class="form-group">
+          <label class="form-label">Horas Semanales <span class="required">*</span></label>
+          <input 
+            type="number" 
+            class="form-control" 
+            [(ngModel)]="asignatura.horas_semanales" 
+            name="horas_semanales"
+            required
+            min="1"
+            max="20"
+            placeholder="Ej: 5"
+          >
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm"></span>
+            }
+            {{ loading ? 'Guardando...' : (isEdit ? '💾 Actualizar' : '➕ Crear') }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            ❌ Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

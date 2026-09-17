@@ -123,6 +123,11 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/asignaturas']);
   }
 
+   irAHorarios(): void {
+    this.router.navigate(['/horarios']);
+  }
+
+
   logout(): void {
     this.authService.logout();
   }

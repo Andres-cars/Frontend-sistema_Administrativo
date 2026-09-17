@@ -14,6 +14,8 @@ import { FormDocenteComponent } from './features/docentes/form-docente/form-doce
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ListaCursosComponent } from './features/cursos/lista-cursos/lista-cursos.component';
 import { FormCursoComponent } from './features/cursos/form-curso/form-curso.component';
+import { ListaAsignaturasComponent } from './features/asignaturas/lista-asignaturas/lista-asignaturas.component';
+import {  FormAsignaturaComponent} from './features/asignaturas/form-asignatura/form-asignatura.component';
 
 @NgModule({
   declarations: [App],
@@ -27,7 +29,9 @@ import { FormCursoComponent } from './features/cursos/form-curso/form-curso.comp
     ListaDocentesComponent,
     FormDocenteComponent,
     ListaCursosComponent,
-    FormCursoComponent
+    FormCursoComponent,
+    ListaAsignaturasComponent,
+    FormAsignaturaComponent
   ],
   providers: [
     {

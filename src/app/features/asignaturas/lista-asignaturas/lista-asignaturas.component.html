@@ -1,0 +1,74 @@
+<!-- src/app/features/asignaturas/lista-asignaturas/lista-asignaturas.component.html -->
+<div class="container">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Asignaturas</span>
+  </div>
+  <div class="d-flex">
+    <h2>📖 Lista de Asignaturas</h2>
+    @if (isAdmin) {
+      <button (click)="irACrear()" class="btn-primary">
+        ➕ Nueva Asignatura
+      </button>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="text-center">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  }
+
+  @if (!loading && asignaturas.length > 0) {
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Código</th>
+            <th>Horas Semanales</th>
+            @if (isAdmin) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (asignatura of asignaturas; track asignatura.id) {
+            <tr>
+              <td>{{ asignatura.id }}</td>
+              <td>{{ asignatura.nombre }}</td>
+              <td>
+                <span class="badge bg-info">{{ asignatura.codigo || 'Sin código' }}</span>
+              </td>
+              <td>
+                <span class="badge bg-primary">{{ asignatura.horas_semanales }} horas</span>
+              </td>
+              @if (isAdmin) {
+                <td>
+                  <button (click)="irAEditar(asignatura.id)" class="btn btn-warning me-1" title="Editar">
+                    ✏️
+                  </button>
+                  <button (click)="eliminarAsignatura(asignatura.id)" class="btn btn-danger" title="Eliminar">
+                    🗑️
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (!loading && asignaturas.length === 0) {
+    <div class="text-center py-5">
+      <p class="text-muted">📭 No hay asignaturas registradas</p>
+    </div>
+  }
+</div>
