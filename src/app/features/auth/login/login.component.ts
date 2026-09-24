@@ -69,12 +69,26 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMessage = '';
+      const inicioCarga = Date.now();
+  const tiempoMinimo = 1000; // 1.5 segundos
+
 
     this.authService.login(this.usuario, this.password).subscribe({
       next: (response) => {
+        const tiempoTranscurrido = Date.now() - inicioCarga;
+
+      const tiempoRestante =
+        Math.max(0, tiempoMinimo - tiempoTranscurrido);
+
+      setTimeout(() => {
+
         this.loading = false;
+
         console.log('✅ Login exitoso:', response);
+
         this.router.navigate(['/dashboard']);
+
+      }, tiempoRestante);
       },
       error: (error) => {
         this.loading = false;

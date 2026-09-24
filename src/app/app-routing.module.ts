@@ -9,6 +9,11 @@ import { ListaCursosComponent } from './features/cursos/lista-cursos/lista-curso
 import { FormCursoComponent } from './features/cursos/form-curso/form-curso.component';
 import { ListaAsignaturasComponent } from './features/asignaturas/lista-asignaturas/lista-asignaturas.component';
 import { FormAsignaturaComponent } from './features/asignaturas/form-asignatura/form-asignatura.component';
+import { ListaAulasComponent } from './features/aulas/lista-aulas/lista-aulas.component';
+import { FormAulaComponent } from './features/aulas/form-aula/form-aula.component';
+// CARGAS HORARIAS ✅ NUEVO
+import { ListaCargasComponent } from './features/cargas-horarias/lista-cargas/lista-cargas.component';
+import { FormCargaComponent } from './features/cargas-horarias/form-carga/form-carga.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -76,6 +81,45 @@ const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMINISTRADOR'] }
   },
+  // AULAS ✅ NUEVO
+  {
+    path: 'aulas',
+    component: ListaAulasComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMINISTRADOR'] }
+  },
+  {
+    path: 'aulas/crear',
+    component: FormAulaComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMINISTRADOR'] }
+  },
+  {
+    path: 'aulas/editar/:id',
+    component: FormAulaComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMINISTRADOR'] }
+  },
+  // CARGAS HORARIAS ✅ NUEVO
+  {
+    path: 'cargas-horarias',
+    component: ListaCargasComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMINISTRADOR'] }
+  },
+  {
+    path: 'cargas-horarias/crear',
+    component: FormCargaComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMINISTRADOR'] }
+  },
+  {
+    path: 'cargas-horarias/editar/:id',
+    component: FormCargaComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMINISTRADOR'] }
+  },
+
   { path: '**', redirectTo: '/login' }
 ];
 

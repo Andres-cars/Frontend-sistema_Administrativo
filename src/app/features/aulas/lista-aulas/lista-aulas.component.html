@@ -1,0 +1,74 @@
+<!-- src/app/features/aulas/lista-aulas/lista-aulas.component.html -->
+<div class="container">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Aulas</span>
+  </div>
+  <div class="d-flex">
+    <h2>🏫 Lista de Aulas</h2>
+    @if (isAdmin) {
+      <button (click)="irACrear()" class="btn-primary">
+        ➕ Nueva Aula
+      </button>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="text-center">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  }
+
+  @if (!loading && aulas.length > 0) {
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Capacidad</th>
+            <th>Tipo</th>
+            @if (isAdmin) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (aula of aulas; track aula.id) {
+            <tr>
+              <td>{{ aula.id }}</td>
+              <td>{{ aula.nombre }}</td>
+              <td>
+                <span class="badge bg-info">
+                  {{ aula.capacidad || 'No definida' }} estudiantes
+                </span>
+              </td>
+              <td>{{ aula.tipo || '-' }}</td>
+              @if (isAdmin) {
+                <td>
+                  <button (click)="irAEditar(aula.id)" class="btn btn-warning me-1" title="Editar">
+                    ✏️
+                  </button>
+                  <button (click)="eliminarAula(aula.id)" class="btn btn-danger" title="Eliminar">
+                    🗑️
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (!loading && aulas.length === 0) {
+    <div class="text-center py-5">
+      <p class="text-muted">📭 No hay aulas registradas</p>
+    </div>
+  }
+</div>

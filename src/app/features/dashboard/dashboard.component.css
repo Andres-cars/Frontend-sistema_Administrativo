@@ -938,3 +938,43 @@
   }
 
 }
+
+/* =========================================
+   MÉTRICAS - COLORES POR TIPO
+========================================= */
+
+/* Docentes */
+.metric-card.docentes .metric-icon {
+  background: #fbeaec;
+}
+
+.metric-card.docentes .metric-line {
+  background: #a91b2e;
+}
+
+/* Cursos */
+.metric-card.cursos .metric-icon {
+  background: #e7f0fd;
+}
+
+.metric-card.cursos .metric-line {
+  background: #2563eb;
+}
+
+/* Asignaturas */
+.metric-card.asignaturas .metric-icon {
+  background: #fef3e2;
+}
+
+.metric-card.asignaturas .metric-line {
+  background: #ea8c1a;
+}
+
+/* Aulas */
+.metric-card.aulas .metric-icon {
+  background: #e8f5e9;
+}
+
+.metric-card.aulas .metric-line {
+  background: #2e7d32;
+}

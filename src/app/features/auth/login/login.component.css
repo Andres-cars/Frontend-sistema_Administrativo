@@ -349,3 +349,374 @@
     padding: 32px 24px;
   }
 }
+
+
+
+/* =========================================================
+   PANTALLA DE CARGA DEL LOGIN
+   ========================================================= */
+
+.login-loading-overlay {
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(74, 10, 20, 0.97),
+      rgba(169, 27, 46, 0.97)
+    );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  animation: loadingFadeIn 0.25s ease-out;
+}
+
+
+/* Contenedor central */
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: #fff;
+
+  animation: loadingContentIn 0.5s ease-out;
+}
+
+
+/* =========================================================
+   CONTENEDOR DEL LOGO
+   ========================================================= */
+
+.logo-loader {
+  position: relative;
+
+  width: 190px;
+  height: 190px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 28px;
+}
+
+
+/* Círculo exterior */
+
+.logo-loader::before {
+  content: '';
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  border-radius: 50%;
+
+  border: 4px solid rgba(255, 255, 255, 0.18);
+
+  border-top-color: #ffffff;
+  border-right-color: rgba(255, 255, 255, 0.65);
+
+  animation: logoSpinner 1.2s linear infinite;
+}
+
+
+/* Segundo círculo */
+
+.logo-loader::after {
+  content: '';
+
+  position: absolute;
+
+  width: 158px;
+  height: 158px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  animation: logoPulse 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.loading-logo {
+  position: relative;
+
+  z-index: 2;
+
+  width: 125px;
+  height: 125px;
+
+  object-fit: contain;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  padding: 5px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.08),
+    0 15px 45px rgba(0, 0, 0, 0.25);
+
+  animation: logoFloat 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   TEXTO
+   ========================================================= */
+
+.loading-content h3 {
+
+  margin: 0 0 8px;
+
+  font-family:
+    'Space Grotesk',
+    sans-serif;
+
+  font-size: 24px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.01em;
+
+}
+
+
+.loading-content p {
+
+  margin: 0;
+
+  font-family:
+    'IBM Plex Sans',
+    sans-serif;
+
+  font-size: 14px;
+
+  color: rgba(255, 255, 255, 0.75);
+
+}
+
+
+/* =========================================================
+   PUNTOS
+   ========================================================= */
+
+.loading-dots {
+
+  display: flex;
+
+  gap: 6px;
+
+  margin-top: 18px;
+
+}
+
+
+.loading-dots span {
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  opacity: 0.3;
+
+  animation: loadingDot 1.4s infinite ease-in-out;
+
+}
+
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes loadingFadeIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes loadingContentIn {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(15px) scale(0.96);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+
+  }
+
+}
+
+
+@keyframes logoSpinner {
+
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+@keyframes logoPulse {
+
+  0%,
+  100% {
+
+    transform: scale(1);
+
+    opacity: 0.5;
+
+  }
+
+  50% {
+
+    transform: scale(1.08);
+
+    opacity: 1;
+
+  }
+
+}
+
+
+@keyframes logoFloat {
+
+  0%,
+  100% {
+
+    transform: translateY(0);
+
+  }
+
+  50% {
+
+    transform: translateY(-5px);
+
+  }
+
+}
+
+
+@keyframes loadingDot {
+
+  0%,
+  60%,
+  100% {
+
+    opacity: 0.25;
+
+    transform: translateY(0);
+
+  }
+
+  30% {
+
+    opacity: 1;
+
+    transform: translateY(-5px);
+
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .logo-loader {
+
+    width: 160px;
+    height: 160px;
+
+  }
+
+  .logo-loader::before {
+
+    width: 150px;
+    height: 150px;
+
+  }
+
+  .logo-loader::after {
+
+    width: 132px;
+    height: 132px;
+
+  }
+
+  .loading-logo {
+
+    width: 105px;
+    height: 105px;
+
+  }
+
+  .loading-content h3 {
+
+    font-size: 21px;
+
+  }
+
+}

@@ -1,0 +1,82 @@
+<!-- src/app/features/cargas-horarias/lista-cargas/lista-cargas.component.html -->
+<div class="container">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Cargas horarias</span>
+  </div>
+  <div class="d-flex">
+    <h2>📋 Lista de Cargas Horarias</h2>
+    @if (isAdmin) {
+      <button (click)="irACrear()" class="btn-primary">
+        ➕ Nueva Carga
+      </button>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+  }
+
+  @if (loading) {
+    <div class="text-center">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  }
+
+  @if (!loading && cargas.length > 0) {
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Docente</th>
+            <th>Asignatura</th>
+            <th>Curso</th>
+            <th>Período</th>
+            <th>Horas/Semana</th>
+            @if (isAdmin) {
+              <th>Acciones</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (carga of cargas; track carga.id) {
+            <tr>
+              <td>{{ carga.id }}</td>
+              <td>
+                <span class="badge bg-info">
+                  {{ carga.docente?.nombres }} {{ carga.docente?.apellidos }}
+                </span>
+              </td>
+              <td>{{ carga.asignatura?.nombre }}</td>
+              <td>
+                {{ carga.curso?.nivel }} {{ carga.curso?.grado }} "{{ carga.curso?.paralelo }}"
+              </td>
+              <td>{{ carga.periodo?.nombre }}</td>
+              <td>
+                <span class="badge bg-primary">{{ carga.horas_semanales }} h</span>
+              </td>
+              @if (isAdmin) {
+                <td>
+                  <button (click)="irAEditar(carga.id)" class="btn btn-warning me-1" title="Editar">
+                    ✏️
+                  </button>
+                  <button (click)="eliminarCarga(carga.id)" class="btn btn-danger" title="Eliminar">
+                    🗑️
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (!loading && cargas.length === 0) {
+    <div class="text-center py-5">
+      <p class="text-muted">📭 No hay cargas horarias registradas</p>
+    </div>
+  }
+</div>

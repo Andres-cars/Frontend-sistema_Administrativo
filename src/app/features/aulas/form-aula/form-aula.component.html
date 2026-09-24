@@ -1,0 +1,81 @@
+<!-- src/app/features/aulas/form-aula/form-aula.component.html -->
+<div class="container">
+   <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <button class="crumb-btn" (click)="cancelar()">Aulas</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ isEdit ? 'Editar' : 'Nueva' }}</span>
+  </div>
+  <div class="card shadow">
+    <div class="card-header">
+      <h4>{{ isEdit ? '✏️ Editar Aula' : '➕ Nueva Aula' }}</h4>
+    </div>
+    <div class="card-body">
+      
+      @if (errorMessage) {
+        <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success">✅ {{ successMessage }}</div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+        
+        <!-- Nombre -->
+        <div class="form-group">
+          <label class="form-label">Nombre <span class="required">*</span></label>
+          <input 
+            type="text" 
+            class="form-control" 
+            [(ngModel)]="aula.nombre" 
+            name="nombre"
+            required
+            placeholder="Ej: Aula 1, Laboratorio A..."
+          >
+        </div>
+
+        <!-- Capacidad -->
+        <div class="form-group">
+          <label class="form-label">Capacidad</label>
+          <input 
+            type="number" 
+            class="form-control" 
+            [(ngModel)]="aula.capacidad" 
+            name="capacidad"
+            min="1"
+            placeholder="Ej: 30"
+          >
+        </div>
+
+        <!-- Tipo -->
+        <div class="form-group">
+          <label class="form-label">Tipo de Aula</label>
+          <select 
+            class="form-control" 
+            [(ngModel)]="aula.tipo" 
+            name="tipo"
+          >
+            <option value="">Seleccione un tipo</option>
+            @for (tipo of tiposAula; track tipo) {
+              <option [value]="tipo">{{ tipo }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm"></span>
+            }
+            {{ loading ? 'Guardando...' : (isEdit ? '💾 Actualizar' : '➕ Crear') }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            ❌ Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

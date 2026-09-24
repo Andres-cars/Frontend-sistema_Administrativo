@@ -1,0 +1,104 @@
+<!-- src/app/features/cargas-horarias/form-carga/form-carga.component.html -->
+<div class="container">
+  <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <button class="crumb-btn" (click)="cancelar()">Cargas horarias</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ isEdit ? 'Editar' : 'Nueva' }}</span>
+  </div>
+  <div class="card shadow">
+    <div class="card-header">
+      <h4>{{ isEdit ? '✏️ Editar Carga Horaria' : '➕ Nueva Carga Horaria' }}</h4>
+    </div>
+    <div class="card-body">
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success">✅ {{ successMessage }}</div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+
+        <!-- Docente -->
+        <div class="form-group">
+          <label class="form-label">Docente <span class="required">*</span></label>
+          <select class="form-control" [(ngModel)]="carga.docente_id" name="docente_id" required>
+            <option value="">Seleccione un docente</option>
+            @for (docente of docentes; track docente.id) {
+              <option [value]="docente.id">
+                {{ docente.nombres }} {{ docente.apellidos }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Asignatura -->
+        <div class="form-group">
+          <label class="form-label">Asignatura <span class="required">*</span></label>
+          <select class="form-control" [(ngModel)]="carga.asignatura_id" name="asignatura_id" required>
+            <option value="">Seleccione una asignatura</option>
+            @for (asignatura of asignaturas; track asignatura.id) {
+              <option [value]="asignatura.id">
+                {{ asignatura.nombre }} ({{ asignatura.codigo }})
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Curso -->
+        <div class="form-group">
+          <label class="form-label">Curso <span class="required">*</span></label>
+          <select class="form-control" [(ngModel)]="carga.curso_id" name="curso_id" required>
+            <option value="">Seleccione un curso</option>
+            @for (curso of cursos; track curso.id) {
+              <option [value]="curso.id">
+                {{ curso.nivel }} {{ curso.grado }} "{{ curso.paralelo }}"
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Período -->
+        <div class="form-group">
+          <label class="form-label">Período Académico <span class="required">*</span></label>
+          <select class="form-control" [(ngModel)]="carga.periodo_id" name="periodo_id" required>
+            @for (periodo of periodos; track periodo.id) {
+              <option [value]="periodo.id">{{ periodo.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Horas Semanales -->
+        <div class="form-group">
+          <label class="form-label">Horas Semanales <span class="required">*</span></label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="carga.horas_semanales"
+            name="horas_semanales"
+            required
+            min="1"
+            max="20"
+            placeholder="Ej: 5"
+          >
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex">
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            @if (loading) {
+              <span class="spinner-border spinner-border-sm"></span>
+            }
+            {{ loading ? 'Guardando...' : (isEdit ? '💾 Actualizar' : '➕ Crear') }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">
+            ❌ Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

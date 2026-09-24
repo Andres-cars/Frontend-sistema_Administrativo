@@ -15,7 +15,11 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ListaCursosComponent } from './features/cursos/lista-cursos/lista-cursos.component';
 import { FormCursoComponent } from './features/cursos/form-curso/form-curso.component';
 import { ListaAsignaturasComponent } from './features/asignaturas/lista-asignaturas/lista-asignaturas.component';
-import {  FormAsignaturaComponent} from './features/asignaturas/form-asignatura/form-asignatura.component';
+import { FormAsignaturaComponent } from './features/asignaturas/form-asignatura/form-asignatura.component';
+import { ListaAulasComponent } from './features/aulas/lista-aulas/lista-aulas.component';
+import { FormAulaComponent } from './features/aulas/form-aula/form-aula.component';
+import { ListaCargasComponent } from './features/cargas-horarias/lista-cargas/lista-cargas.component';
+import { FormCargaComponent } from './features/cargas-horarias/form-carga/form-carga.component';
 
 @NgModule({
   declarations: [App],
@@ -31,7 +35,11 @@ import {  FormAsignaturaComponent} from './features/asignaturas/form-asignatura/
     ListaCursosComponent,
     FormCursoComponent,
     ListaAsignaturasComponent,
-    FormAsignaturaComponent
+    FormAsignaturaComponent,
+    ListaAulasComponent,
+    FormAulaComponent,
+    ListaCargasComponent,
+    FormCargaComponent,
   ],
   providers: [
     {

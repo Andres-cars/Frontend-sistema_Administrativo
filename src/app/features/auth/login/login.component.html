@@ -1,40 +1,123 @@
-<!-- src/app/features/auth/login/login.component.html -->
+<!-- ========================================= -->
+<!-- PANTALLA DE CARGA -->
+<!-- ========================================= -->
+<div class="login-loading-overlay" *ngIf="loading">
+
+  <div class="loading-content">
+
+    <!-- Círculo animado -->
+    <div class="logo-loader">
+
+      <!-- Logo de la institución -->
+      <img
+        src="assets/images/logo.png"
+        alt="Unidad Educativa Si Miao Wei Hua"
+        class="loading-logo"
+      />
+
+    </div>
+
+    <!-- Texto -->
+    <h3>Iniciando sesión</h3>
+
+    <p>Verificando tus credenciales...</p>
+
+    <!-- Puntos animados -->
+    <div class="loading-dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- LOGIN -->
+<!-- ========================================= -->
+
 <div class="login-container">
   <div class="login-card">
 
     <!-- Panel de marca -->
     <div class="brand-panel">
+
       <div class="mesh">
-        <div *ngFor="let c of meshCells" [ngClass]="c"></div>
-      </div>
-      <div class="brand-top">
-        <p class="brand-eyebrow">Gestión académica inteligente</p>
-        <h1 class="brand-title">Unidad Educativa<br />Si Miao Wei Hua</h1>
-        <p class="brand-sub">
-          Cursos, docentes, asignaturas y horarios en un solo sistema, con generación
-          automática de horarios mediante algoritmo genético.
-        </p>
-      </div>
-      <div class="brand-bottom">
-        <div class="brand-tags">
-          <span class="brand-tag">Horarios · IA</span>
-          <span class="brand-tag">Consultas · Chatbot</span>
+        <div
+          *ngFor="let c of meshCells"
+          [ngClass]="c">
         </div>
-        <p class="brand-foot">© 2026 · Si Miao Wei Hua</p>
       </div>
+
+      <div class="brand-top">
+
+        <p class="brand-eyebrow">
+          Gestión académica inteligente
+        </p>
+
+        <h1 class="brand-title">
+          Unidad Educativa<br />
+          Si Miao Wei Hua
+        </h1>
+
+        <p class="brand-sub">
+          Cursos, docentes, asignaturas y horarios en un solo sistema,
+          con generación automática de horarios mediante algoritmo genético.
+        </p>
+
+      </div>
+
+      <div class="brand-bottom">
+
+        <div class="brand-tags">
+
+          <span class="brand-tag">
+            Horarios · IA
+          </span>
+
+          <span class="brand-tag">
+            Consultas · Chatbot
+          </span>
+
+        </div>
+
+        <p class="brand-foot">
+          © 2026 · Si Miao Wei Hua
+        </p>
+
+      </div>
+
     </div>
 
-    <!-- Panel de formulario -->
+
+    <!-- ========================================= -->
+    <!-- PANEL FORMULARIO -->
+    <!-- ========================================= -->
+
     <div class="form-panel">
-      <p class="form-eyebrow">Acceso al sistema</p>
-      <h2 class="form-title">Iniciar sesión</h2>
 
-      <!-- Selector de rol: UI lista, aún no conectada al AuthService -->
-      
+      <p class="form-eyebrow">
+        Acceso al sistema
+      </p>
 
-      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <h2 class="form-title">
+        Iniciar sesión
+      </h2>
+
+
+      <form
+        (ngSubmit)="onSubmit()"
+        #loginForm="ngForm">
+
+        <!-- USUARIO -->
         <div class="field">
-          <label for="usuario">Usuario</label>
+
+          <label for="usuario">
+            Usuario
+          </label>
+
           <input
             type="text"
             id="usuario"
@@ -44,16 +127,35 @@
             required
             placeholder="Ingresa tu usuario"
             class="form-control"
-            [class.is-invalid]="usuarioInput.invalid && usuarioInput.touched"
+            [class.is-invalid]="
+              usuarioInput.invalid &&
+              usuarioInput.touched
+            "
           />
-          <div *ngIf="usuarioInput.invalid && usuarioInput.touched" class="invalid-feedback">
+
+          <div
+            *ngIf="
+              usuarioInput.invalid &&
+              usuarioInput.touched
+            "
+            class="invalid-feedback">
+
             El usuario es obligatorio
+
           </div>
+
         </div>
 
+
+        <!-- CONTRASEÑA -->
         <div class="field">
-          <label for="password">Contraseña</label>
+
+          <label for="password">
+            Contraseña
+          </label>
+
           <div class="input-wrap">
+
             <input
               [type]="showPassword ? 'text' : 'password'"
               id="password"
@@ -63,32 +165,86 @@
               required
               placeholder="Ingresa tu contraseña"
               class="form-control"
-              [class.is-invalid]="passwordInput.invalid && passwordInput.touched"
+              [class.is-invalid]="
+                passwordInput.invalid &&
+                passwordInput.touched
+              "
             />
-            <button type="button" class="icon-btn" (click)="showPassword = !showPassword">
+
+            <button
+              type="button"
+              class="icon-btn"
+              (click)="showPassword = !showPassword">
+
               {{ showPassword ? 'ocultar' : 'ver' }}
+
             </button>
+
           </div>
-          <div *ngIf="passwordInput.invalid && passwordInput.touched" class="invalid-feedback">
+
+          <div
+            *ngIf="
+              passwordInput.invalid &&
+              passwordInput.touched
+            "
+            class="invalid-feedback">
+
             La contraseña es obligatoria
+
           </div>
+
         </div>
 
+
+        <!-- RECUPERAR CONTRASEÑA -->
         <div class="row-between">
-          <a class="link-muted" href="#">Olvidaste tu contraseña</a>
+
+          <a
+            class="link-muted"
+            href="#">
+
+            Olvidaste tu contraseña
+
+          </a>
+
         </div>
 
-        <div *ngIf="errorMessage" class="alert alert-danger">
+
+        <!-- ERROR -->
+        <div
+          *ngIf="errorMessage"
+          class="alert alert-danger">
+
           {{ errorMessage }}
+
         </div>
 
-        <button type="submit" class="btn-primary" [disabled]="loading">
-          <span *ngIf="loading" class="spinner-border"></span>
-          {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+
+        <!-- BOTÓN -->
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="loading">
+
+          <span
+            *ngIf="loading"
+            class="spinner-border">
+          </span>
+
+          {{ loading
+            ? 'Iniciando sesión...'
+            : 'Iniciar sesión'
+          }}
+
         </button>
+
       </form>
 
-      <p class="form-foot">Acceso restringido al personal autorizado de la institución</p>
+
+      <p class="form-foot">
+        Acceso restringido al personal autorizado de la institución
+      </p>
+
     </div>
 
   </div>
