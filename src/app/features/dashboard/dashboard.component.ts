@@ -1,5 +1,5 @@
 // src/app/features/dashboard/dashboard.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -38,7 +38,8 @@ export class DashboardComponent implements OnInit {
     private cursoService: CursoService,
     private asignaturaService: AsignaturaService,
     private aulaService: AulaService,
-    private router: Router
+    private router: Router,
+     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -62,6 +63,7 @@ export class DashboardComponent implements OnInit {
         this.totalDocentes = response?.data?.length || 0;
         this.cargandoDocentes = false;
         console.log('👨‍🏫 Total docentes:', this.totalDocentes);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Error docentes:', error);
@@ -78,6 +80,7 @@ export class DashboardComponent implements OnInit {
         this.totalCursos = response?.data?.length || 0;
         this.cargandoCursos = false;
         console.log('📚 Total cursos:', this.totalCursos);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Error cursos:', error);
@@ -94,6 +97,7 @@ export class DashboardComponent implements OnInit {
         this.totalAsignaturas = response?.data?.length || 0;
         this.cargandoAsignaturas = false;
         console.log('📖 Total asignaturas:', this.totalAsignaturas);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Error asignaturas:', error);
@@ -110,6 +114,7 @@ export class DashboardComponent implements OnInit {
         this.totalAulas = response?.data?.length || 0;
         this.cargandoAulas = false;
         console.log('🏫 Total aulas:', this.totalAulas);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Error aulas:', error);
@@ -130,6 +135,7 @@ export class DashboardComponent implements OnInit {
   irAHorarios(): void { this.router.navigate(['/horarios']); }
   // Agregar en la clase DashboardComponent:
 irACargas(): void { this.router.navigate(['/cargas-horarias']); }
+
 
   logout(): void {
     this.authService.logout();

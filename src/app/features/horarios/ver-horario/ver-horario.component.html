@@ -1,0 +1,77 @@
+<!-- src/app/features/horarios/ver-horario/ver-horario.component.html -->
+<div class="container">
+  <!-- HEADER -->
+     <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <button class="crumb-btn" (click)="volver()">Horarios</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">{{ horario?.nombre || 'Ver' }}</span>
+    
+  </div>
+  <div class="header-actions">
+    
+    <button class="btn btn-primary" (click)="imprimir()">
+      🖨️ Imprimir
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando horario...</p>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+  }
+
+  @if (!loading && horario) {
+    <div class="horario-header">
+      <h2>📅 {{ horario.nombre }}</h2>
+      <p>Período: {{ horario.periodo_id }} | Jornada: {{ horario.jornada_id }}</p>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div class="calendar">
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th class="hora-header">Hora</th>
+            @for (dia of dias; track dia) {
+              <th class="dia-header">{{ dia }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (hora of horas; track hora) {
+            <tr>
+              <td class="hora-cell">{{ hora }}</td>
+              @for (dia of dias; track dia) {
+                <td class="clase-cell">
+                  @if (getClase(dia, hora); as clase) {
+                    <div class="clase-card">
+                      <div class="clase-asignatura">
+                        {{ clase.carga_horaria?.asignatura?.nombre || 'Asignatura' }}
+                      </div>
+                      <div class="clase-docente">
+                        👨‍🏫 {{ clase.carga_horaria?.docente?.nombres }}
+                      </div>
+                      <div class="clase-curso">
+                        📚 {{ clase.carga_horaria?.curso?.grado }}
+                      </div>
+                      <div class="clase-aula">
+                        🏫 {{ clase.aula?.nombre }}
+                      </div>
+                    </div>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,419 @@
+/* src/app/features/horarios/generar-horario/generar-horario.component.css */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 30px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 24px;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 20px 0;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 12px 0;
+}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CONFIGURACIÓN */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  color: #2d3748;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #2d3748;
+  background: #f7fafc;
+  transition: all 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* ACCIONES */
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+}
+
+.btn-success:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e0;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* SPINNER */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ALERTAS */
+.alert {
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-danger {
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+}
+
+.alert-success {
+  background: #f0fff4;
+  color: #276749;
+  border: 1px solid #9ae6b4;
+}
+
+/* MÉTRICAS DEL RESULTADO */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric {
+  background: #f7fafc;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s;
+}
+
+.metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric.fitness-excelente {
+  background: #f0fff4;
+  border-color: #d0dbd5;
+}
+
+.metric.fitness-excelente .metric-value {
+  color: #276749;
+}
+
+.metric.fitness-bueno {
+  background: #fffaf0;
+  border-color: #ed8936;
+}
+
+.metric.fitness-bueno .metric-value {
+  color: #c05621;
+}
+
+.metric.fitness-regular {
+  background: #fffaf0;
+  border-color: #ed8936;
+}
+
+.metric.fitness-malo {
+  background: #fff5f5;
+  border-color: #f56565;
+}
+
+.metric.fitness-malo .metric-value {
+  color: #c53030;
+}
+
+/* PREVIEW */
+.preview-section {
+  background: #f7fafc;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.preview-info p {
+  margin: 6px 0;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+/* TABLA */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table thead {
+  background: #2d3748;
+}
+
+.table thead th {
+  padding: 14px;
+  text-align: left;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+  background: #f7fafc;
+}
+
+.table tbody td {
+  padding: 14px;
+  color: #2d3748;
+}
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+}
+
+/* ESTADOS */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #718096;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #718096;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  :host { padding: 16px 12px; }
+  h2 { font-size: 22px; }
+  .card { padding: 18px; }
+  .actions { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+  .table { font-size: 12px; }
+  .table thead th, .table tbody td { padding: 10px 8px; }
+}
+
+
+
+
+
+/* src/app/features/horarios/generar-horario/generar-horario.component.css */
+:host {
+  --rojo: #A91B2E;
+  
+  display: block;
+  min-height: 100vh;
+  background: var(--papel);
+  padding: 24px 32px 40px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  font-size: 13px; color: var(--slate);
+}
+.crumb-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--slate); display: flex; align-items: center; gap: 5px; transition: color .15s ease;
+}
+.crumb-btn:hover { color: var(--rojo); }
+.crumb-btn i { font-size: 15px; }
+.crumb-sep { color: var(--slate-light); }
+.crumb-current { font-weight: 600; color: var(--tinta); }
+
+h2 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600;
+  color: var(--tinta); margin: 0 0 20px; display: flex; align-items: center; gap: 10px;
+}
+h2 i { color: var(--rojo); }
+
+
+
+/* ---------- Alertas ---------- */
+
+.alert-danger { background: var(--rojo-tint); color: #8A1F2D; border: 1px solid #F3C7CD; }
+
+/* ---------- Header ---------- */
+
+
+.btn-primary { background: var(--rojo); color: #fff; }
+
+.btn-secondary { background: #fff; color: var(--tinta); border: 1px solid var(--linea); }
+.btn-secondary:hover { border-color: var(--slate); }
+
+
+
+
+
+
+
+
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+

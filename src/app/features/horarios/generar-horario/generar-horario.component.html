@@ -1,0 +1,173 @@
+<!-- src/app/features/horarios/generar-horario/generar-horario.component.html -->
+<div class="container">
+   <div class="breadcrumb">
+    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Horarios</span>
+  </div>
+  <h2>🧬 Generador de Horarios</h2>
+
+  <!-- CONFIGURACIÓN -->
+  <div class="card config-card">
+    <h3>⚙️ Configuración</h3>
+
+    <div class="config-grid">
+      <div class="form-group">
+        <label>Período Académico</label>
+        <select [(ngModel)]="periodoId" class="form-control">
+          <option [value]="1">Periodo Académico 2026-2027</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Jornada</label>
+        <select [(ngModel)]="jornadaId" class="form-control">
+          <option [value]="1">MATUTINA (07:00 - 13:00)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre del Horario</label>
+        <input
+          type="text"
+          [(ngModel)]="nombreHorario"
+          class="form-control"
+          placeholder="Ej: Horario 2026-2027"
+        >
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        class="btn btn-primary"
+        (click)="generarHorario()"
+        [disabled]="generando"
+      >
+        @if (generando) {
+          <span class="spinner"></span>
+          Generando...
+        } @else {
+          🧬 Generar Horario
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- MENSAJES -->
+  @if (errorMessage) {
+    <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  <!-- RESULTADO -->
+  @if (resultado) {
+    <div class="card resultado-card">
+      <h3>📊 Resultado del Algoritmo</h3>
+
+      <div class="metrics">
+        <div class="metric" [ngClass]="getFitnessClass()">
+          <div class="metric-value">{{ resultado.fitness }}%</div>
+          <div class="metric-label">Aptitud</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-value">{{ resultado.conflictos }}</div>
+          <div class="metric-label">Conflictos</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-value">{{ resultado.generaciones }}</div>
+          <div class="metric-label">Generaciones</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-value">{{ resultado.totalClases }}</div>
+          <div class="metric-label">Clases</div>
+        </div>
+      </div>
+
+      <!-- PREVISUALIZACIÓN DE HORARIO -->
+      <div class="preview-section">
+        <h4>📅 Previsualización del Horario</h4>
+        <div class="preview-info">
+          <p>Se generaron <strong>{{ resultado.totalClases }} clases</strong>.</p>
+          <p>Puedes guardar este horario o generar uno nuevo.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          class="btn btn-success"
+          (click)="guardarHorario()"
+          [disabled]="guardando"
+        >
+          @if (guardando) {
+            <span class="spinner"></span>
+            Guardando...
+          } @else {
+            💾 Guardar Horario
+          }
+        </button>
+
+        <button class="btn btn-secondary" (click)="generarHorario()">
+          🔄 Regenerar
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- HORARIOS GUARDADOS -->
+  <div class="card">
+    <h3>📋 Horarios Guardados</h3>
+
+    @if (cargandoHorarios) {
+      <div class="loading">Cargando...</div>
+    }
+
+    @if (!cargandoHorarios && horariosGuardados.length === 0) {
+      <div class="empty-state">
+        <p>📭 No hay horarios guardados</p>
+      </div>
+    }
+
+    @if (!cargandoHorarios && horariosGuardados.length > 0) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Período</th>
+            <th>Generado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (h of horariosGuardados; track h.id) {
+            <tr>
+              <td>{{ h.id }}</td>
+              <td>{{ h.nombre }}</td>
+              <td>{{ h.periodo_id }}</td>
+              <td>
+                @if (h.generado_automaticamente) {
+                  <span class="badge badge-success">Automático</span>
+                } @else {
+                  <span class="badge">Manual</span>
+                }
+              </td>
+              <td>
+                <button class="btn btn-info btn-sm" (click)="verHorario(h.id)">
+                  👁️ Ver
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="eliminarHorario(h.id)">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

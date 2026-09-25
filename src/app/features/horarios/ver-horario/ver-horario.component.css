@@ -1,0 +1,292 @@
+/* src/app/features/horarios/ver-horario/ver-horario.component.css */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f7fafc;
+  padding: 30px 20px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* HEADER ACTIONS */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #2d3748;
+  border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #f7fafc;
+}
+
+/* HEADER */
+.horario-header {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.horario-header h2 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  color: #2d3748;
+}
+
+.horario-header p {
+  margin: 0;
+  color: #718096;
+  font-size: 13px;
+}
+
+/* CALENDARIO */
+.calendar {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hora-header {
+  background: #2d3748;
+  color: white;
+  padding: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: 80px;
+}
+
+.dia-header {
+  background: #2d3748;
+  color: white;
+  padding: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.hora-cell {
+  background: #f7fafc;
+  padding: 12px;
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 13px;
+  text-align: center;
+  border-right: 2px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.clase-cell {
+  padding: 6px;
+  border: 1px solid #edf2f7;
+  vertical-align: top;
+  min-width: 140px;
+  height: 90px;
+}
+
+/* CLASE CARD */
+.clase-card {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-left: 4px solid #667eea;
+  border-radius: 6px;
+  padding: 8px 10px;
+  height: 100%;
+  box-sizing: border-box;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.clase-asignatura {
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 12px;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clase-docente,
+.clase-curso,
+.clase-aula {
+  color: #4a5568;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #718096;
+}
+
+.spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.alert {
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.alert-danger {
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+}
+
+/* IMPRIMIR */
+@media print {
+  .header-actions {
+    display: none;
+  }
+
+  :host {
+    background: white;
+    padding: 0;
+  }
+
+  .calendar {
+    box-shadow: none;
+  }
+
+  .clase-card {
+    border: 1px solid #ccc;
+    background: white;
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  :host { padding: 16px 8px; }
+  .calendar-table { font-size: 10px; }
+  .clase-cell { min-width: 80px; padding: 3px; }
+  .clase-card { padding: 4px 6px; }
+  .clase-asignatura { font-size: 10px; }
+  .clase-docente, .clase-curso, .clase-aula { font-size: 9px; }
+}
+
+
+
+
+
+/* src/app/features/horarios/ver-horario/ver-horario.component.css */
+
+:host {
+  --rojo: #A91B2E;
+  
+  display: block;
+  min-height: 100vh;
+  background: var(--papel);
+  padding: 24px 32px 40px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+  font-size: 13px; color: var(--slate); flex-wrap: wrap;
+}
+.crumb-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--slate); display: flex; align-items: center; gap: 5px; transition: color .15s ease;
+}
+.crumb-btn:hover { color: var(--rojo); }
+.crumb-btn i { font-size: 15px; }
+.crumb-sep { color: var(--slate-light); }
+.crumb-current { font-weight: 600; color: var(--tinta); }
+
+/* ---------- Header ---------- */
+.header-actions { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+
+.btn {
+  padding: 10px 18px; border-radius: 10px; border: none;
+  font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 13.5px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all .15s ease;
+}
+.btn-primary { background: var(--rojo); color: #fff; }
+.btn-primary:hover { background: var(--rojo-oscuro); }
+.btn-secondary { background: #fff; color: var(--tinta); border: 1px solid var(--linea); }
+.btn-secondary:hover { border-color: var(--slate); }
+
+.horario-header { margin-bottom: 18px; }
+.horario-header h2 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 600;
+  color: var(--tinta); margin: 0 0 4px; display: flex; align-items: center; gap: 9px;
+}
+.horario-header h2 i { color: var(--rojo); }
+.horario-header p { font-size: 13px; color: var(--slate); margin: 0; }
+
+.alert {
+  padding: 12px 16px; border-radius: 10px; font-size: 13.5px; font-weight: 500;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 9px;
+  background: var(--rojo-tint); color: #8A1F2D; border: 1px solid #F3C7CD;
+}
+
+.loading { text-align: center; padding: 60px 0; color: var(--slate-light); }
+.loading p { margin: 10px 0 0; font-size: 13px; }
+.spinner {
+  display: inline-block; width: 32px; height: 32px; border: 3px solid var(--linea);
+  border-top-color: var(--rojo); border-radius: 50%; animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+

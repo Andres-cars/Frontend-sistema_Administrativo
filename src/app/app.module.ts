@@ -20,6 +20,8 @@ import { ListaAulasComponent } from './features/aulas/lista-aulas/lista-aulas.co
 import { FormAulaComponent } from './features/aulas/form-aula/form-aula.component';
 import { ListaCargasComponent } from './features/cargas-horarias/lista-cargas/lista-cargas.component';
 import { FormCargaComponent } from './features/cargas-horarias/form-carga/form-carga.component';
+import { GenerarHorarioComponent } from './features/horarios/generar-horario/generar-horario.component';
+import { VerHorarioComponent } from './features/horarios/ver-horario/ver-horario.component';
 
 @NgModule({
   declarations: [App],
@@ -40,6 +42,8 @@ import { FormCargaComponent } from './features/cargas-horarias/form-carga/form-c
     FormAulaComponent,
     ListaCargasComponent,
     FormCargaComponent,
+    GenerarHorarioComponent,
+    VerHorarioComponent
   ],
   providers: [
     {
