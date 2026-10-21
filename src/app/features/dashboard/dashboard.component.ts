@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit {
   // Agregar en la clase DashboardComponent:
 irACargas(): void { this.router.navigate(['/cargas-horarias']); }
 
-
+irAAdmins(): void { this.router.navigate(['/admins']); }
   logout(): void {
     this.authService.logout();
   }

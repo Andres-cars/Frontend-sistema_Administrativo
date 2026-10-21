@@ -22,6 +22,8 @@ import { ListaCargasComponent } from './features/cargas-horarias/lista-cargas/li
 import { FormCargaComponent } from './features/cargas-horarias/form-carga/form-carga.component';
 import { GenerarHorarioComponent } from './features/horarios/generar-horario/generar-horario.component';
 import { VerHorarioComponent } from './features/horarios/ver-horario/ver-horario.component';
+import { ListaAdminsComponent } from './features/admins/lista-admins/lista-admins.component';
+import { FormAdminComponent } from './features/admins/form-admin/form-admin.component';
 
 @NgModule({
   declarations: [App],
@@ -43,7 +45,9 @@ import { VerHorarioComponent } from './features/horarios/ver-horario/ver-horario
     ListaCargasComponent,
     FormCargaComponent,
     GenerarHorarioComponent,
-    VerHorarioComponent
+    VerHorarioComponent,
+    ListaAdminsComponent,
+    FormAdminComponent,
   ],
   providers: [
     {

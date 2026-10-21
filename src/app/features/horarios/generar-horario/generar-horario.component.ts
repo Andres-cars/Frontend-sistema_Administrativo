@@ -1,17 +1,16 @@
 // src/app/features/horarios/generar-horario/generar-horario.component.ts
-import { Component, OnInit,ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { HorarioService } from '../../../core/services/horario.service';
+import { CursoService } from '../../../core/services/curso.service'; // ✅ Importamos Cursos
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { timeout } from 'rxjs'; 
 
 @Component({
   selector: 'app-generar-horario',
-   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './generar-horario.component.html',
   styleUrls: ['./generar-horario.component.css']
 })
@@ -19,7 +18,11 @@ export class GenerarHorarioComponent implements OnInit {
   // Parámetros
   periodoId: number = 1;
   jornadaId: number = 1;
-  nombreHorario: string = 'Horario 2026-2027';
+  cursoId: number | null = null; 
+  nombreHorario: string = '';
+
+  
+  cursos: any[] = [];
 
   // Estado
   generando: boolean = false;
@@ -27,35 +30,59 @@ export class GenerarHorarioComponent implements OnInit {
   resultado: any = null;
   errorMessage: string = '';
   successMessage: string = '';
+  faltanCargas: boolean = false; 
 
-  // Horarios guardados
+  
   horariosGuardados: any[] = [];
   cargandoHorarios: boolean = false;
+  
+  
+  completo: boolean = false;
+  clasesFaltantes: number = 0;
+  horasRequeridas: number = 0;
 
   constructor(
     private horarioService: HorarioService,
+    private cursoService: CursoService, 
     private router: Router,
-      private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    const navigation = this.router.getCurrentNavigation();
-
-    if (navigation?.extras?.state?.['successMessage']) {
-
-      this.successMessage =
-        navigation.extras.state['successMessage'];
-
-      setTimeout(() => {
-
-        this.successMessage = '';
-
-        this.cdr.detectChanges();
-
-      }, 3500);}
-
+    this.cargarCursos(); 
     this.cargarHorariosGuardados();
-    
+  }
+
+  // ============================================
+  // CARGAR CURSOS
+  // ============================================
+  cargarCursos(): void {
+    this.cursoService.getAll().subscribe({
+      next: (response: any) => {
+        this.cursos = response.data || [];
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar cursos:', error);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ============================================
+  // AL CAMBIAR DE CURSO
+  // ============================================
+  onCursoChange(): void {
+    this.errorMessage = '';
+    this.faltanCargas = false;
+    if (this.cursoId) {
+      const curso = this.cursos.find(c => c.id === Number(this.cursoId));
+      if (curso) {
+        this.nombreHorario = `Horario ${curso.grado} "${curso.paralelo}"`;
+      }
+    } else {
+      this.nombreHorario = '';
+    }
   }
 
   // ============================================
@@ -64,31 +91,91 @@ export class GenerarHorarioComponent implements OnInit {
   generarHorario(): void {
     if (this.generando) return;
 
+    if (!this.cursoId) {
+      this.errorMessage = 'Debe seleccionar un curso primero';
+      return;
+    }
+
     this.generando = true;
     this.errorMessage = '';
     this.successMessage = '';
+    this.faltanCargas = false;
     this.resultado = null;
 
-    console.log('🧬 Generando horario...');
+    
+    const startTime = Date.now();
 
-    this.horarioService.generar(this.periodoId, this.jornadaId).subscribe({
+    this.horarioService
+      .generar(this.periodoId, this.jornadaId, this.cursoId)
+      .pipe(timeout(60000)) 
+      .subscribe({
       next: (response) => {
-        this.generando = false;
-        this.resultado = response.data;
-        console.log('✅ Horario generado:', this.resultado);
+        const tiempoTranscurrido = Date.now() - startTime;
+        const tiempoMinimo = 2000; 
+        const tiempoEspera = Math.max(0, tiempoMinimo - tiempoTranscurrido);
 
-        if (this.resultado.exito) {
-          this.successMessage = `✅ Horario generado con éxito (${this.resultado.fitness}% de aptitud)`;
-        } else {
-          this.successMessage = `⚠️ Horario generado con ${this.resultado.conflictos} conflictos (${this.resultado.fitness}%)`;
-        }this.cdr.detectChanges();
+        setTimeout(() => {
+          this.generando = false;
+
+          if (!response?.data) {
+            this.mostrarErrorGenerar({ error: { message: response?.message } });
+            return;
+          }
+
+          this.resultado = response.data;
+
+          this.completo = this.resultado.completo;
+          this.clasesFaltantes = this.resultado.clasesFaltantes || 0;
+          this.horasRequeridas = this.resultado.horasRequeridas || 0;
+
+          if (this.completo) {
+            this.successMessage = `✅ Horario generado correctamente (${this.resultado.fitness}% aptitud, ${this.resultado.totalClases} clases)`;
+          } else {
+            this.successMessage = `⚠️ Horario generado pero FALTAN ${this.clasesFaltantes} clases (${this.resultado.fitness}%)`;
+          }
+          this.cdr.detectChanges();
+        }, tiempoEspera); 
       },
       error: (error) => {
-        this.generando = false;
-        this.errorMessage = error.error?.message || 'Error al generar horario';
-        console.error('❌ Error:', error);
+        const transcurrido = Date.now() - startTime;
+        const espera = Math.max(0, 2000 - transcurrido);
+        setTimeout(() => this.mostrarErrorGenerar(error), espera);
       }
     });
+  }
+
+
+  private mostrarErrorGenerar(error: any): void {
+    this.generando = false;
+    this.resultado = null;
+    this.successMessage = '';
+
+    const msgBackend: string = error?.error?.message || '';
+
+    if (error?.name === 'TimeoutError') {
+      this.errorMessage = 'El servidor tardó demasiado en responder. Inténtalo de nuevo.';
+    } else if (error?.status === 0) {
+      this.errorMessage = 'No se pudo conectar con el servidor. Verifica que el backend esté encendido.';
+    } else if (/carga/i.test(msgBackend)) {
+      // "No hay cargas horarias registradas para este curso o período"
+      this.faltanCargas = true;
+      this.errorMessage =
+        'Este curso no tiene cargas horarias registradas. ' +
+        'Asigna primero las asignaturas y docentes del curso en "Cargas horarias".';
+    } else if (msgBackend) {
+      this.errorMessage = msgBackend;
+    } else if (error?.status >= 500) {
+      this.errorMessage = 'Ocurrió un problema en el servidor. Inténtalo más tarde.';
+    } else {
+      this.errorMessage = 'Error al generar horario';
+    }
+
+    console.error('❌ Error al generar horario:', error);
+    this.cdr.detectChanges();
+  }
+
+  irACargas(): void {
+    this.router.navigate(['/cargas-horarias']);
   }
 
   // ============================================
@@ -112,18 +199,20 @@ export class GenerarHorarioComponent implements OnInit {
       clases: this.resultado.clases
     };
 
-    console.log('💾 Guardando horario...');
-
     this.horarioService.guardar(data).subscribe({
       next: (response) => {
         this.guardando = false;
         this.successMessage = '✅ Horario guardado correctamente';
         this.cargarHorariosGuardados();
+        this.resultado = null; // Limpiamos la vista
+        this.cursoId = null;   // Limpiamos el select
+        this.nombreHorario = '';
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.guardando = false;
         this.errorMessage = error.error?.message || 'Error al guardar horario';
-        console.error('❌ Error:', error);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -133,7 +222,6 @@ export class GenerarHorarioComponent implements OnInit {
   // ============================================
   cargarHorariosGuardados(): void {
     this.cargandoHorarios = true;
-     this.errorMessage = '';
     this.horarioService.getAll().subscribe({
       next: (response) => {
         this.horariosGuardados = response.data || [];
@@ -143,36 +231,23 @@ export class GenerarHorarioComponent implements OnInit {
       error: (error) => {
         this.cargandoHorarios = false;
         console.error('❌ Error:', error);
+        this.cdr.detectChanges();
       }
     });
   }
 
-  // ============================================
-  // VER HORARIO
-  // ============================================
   verHorario(id: number): void {
     this.router.navigate([`/horarios/ver/${id}`]);
   }
 
-  // ============================================
-  // ELIMINAR HORARIO
-  // ============================================
   eliminarHorario(id: number): void {
     if (!confirm('¿Estás seguro de eliminar este horario?')) return;
-
     this.horarioService.delete(id).subscribe({
-      next: () => {
-        this.cargarHorariosGuardados();
-      },
-      error: (error) => {
-        alert(error.error?.message || 'Error al eliminar horario');
-      }
+      next: () => this.cargarHorariosGuardados(),
+      error: (error) => alert(error.error?.message || 'Error al eliminar horario')
     });
   }
 
-  // ============================================
-  // UTILIDADES
-  // ============================================
   getFitnessClass(): string {
     if (!this.resultado) return '';
     const f = this.resultado.fitness;

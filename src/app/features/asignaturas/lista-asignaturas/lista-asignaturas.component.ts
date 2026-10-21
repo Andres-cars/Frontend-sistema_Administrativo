@@ -3,11 +3,15 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AsignaturaService } from '../../../core/services/asignatura.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-lista-asignaturas',
   templateUrl: './lista-asignaturas.component.html',
-  styleUrls: ['./lista-asignaturas.component.css']
+  styleUrls: ['./lista-asignaturas.component.css'],
+  standalone: true,
+  imports: [FormsModule, CommonModule]
 })
 export class ListaAsignaturasComponent implements OnInit {
   asignaturas: any[] = [];
@@ -15,7 +19,7 @@ export class ListaAsignaturasComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   isAdmin: boolean = false;
-
+  filtroBusqueda: string = '';
   constructor(
     private asignaturaService: AsignaturaService,
     private authService: AuthService,
@@ -37,10 +41,10 @@ this.isAdmin = this.authService.isAdmin();
         navigation.extras.state['successMessage'];
 
       setTimeout(() => {
-
+this.cdr.detectChanges();
         this.successMessage = '';
 
-        this.cdr.detectChanges();
+        
 
       }, 3500);
     }
@@ -95,4 +99,18 @@ this.isAdmin = this.authService.isAdmin();
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
+
+  asignaturasFiltradas(): any[] {
+  if (!this.filtroBusqueda) return this.asignaturas;
+  const q = this.filtroBusqueda.toLowerCase().trim();
+  return this.asignaturas.filter(a =>
+    (a.nombre || '').toLowerCase().includes(q) ||
+    (a.codigo || '').toLowerCase().includes(q)
+  );
+}
+
+// Método para limpiar
+limpiarFiltro(): void {
+  this.filtroBusqueda = '';
+}
 }

@@ -1,30 +1,53 @@
 <!-- src/app/features/asignaturas/lista-asignaturas/lista-asignaturas.component.html -->
 <div class="container">
+  <!-- Breadcrumb -->
   <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <button class="crumb-btn" (click)="irADashboard()">
+      <i class="ti ti-arrow-left"></i> Dashboard
+    </button>
     <span class="crumb-sep">/</span>
     <span class="crumb-current">Asignaturas</span>
   </div>
+
+  <!-- Header con buscador y botón -->
   <div class="d-flex">
     <h2>📖 Lista de Asignaturas</h2>
-    @if (isAdmin) {
-      <button (click)="irACrear()" class="btn-primary">
-        ➕ Nueva Asignatura
-      </button>
-    }
-  </div>
 
+    <div class="acciones-header">
+      
+
+      @if (isAdmin) {
+        <button (click)="irACrear()" class="btn-primary">
+          Agregar Asignatura
+        </button>
+      }
+    </div>
+  </div>
+<div class="buscador">
+        <input
+          type="text"
+          class="buscador-input"
+          placeholder="Buscar por nombre o código..."
+          [(ngModel)]="filtroBusqueda"
+          name="filtroAsignaturas">
+        @if (filtroBusqueda) {
+          <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
+        }
+      </div>
+  <!-- Error -->
   @if (errorMessage) {
     <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
   }
 
+  <!-- Loading -->
   @if (loading) {
     <div class="text-center">
-      <div class="spinner-border" role="status"></div>
+      <div class="spinner-border"></div>
     </div>
   }
 
-  @if (!loading && asignaturas.length > 0) {
+  <!-- Tabla -->
+  @if (!loading && asignaturasFiltradas().length > 0) {
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -33,13 +56,11 @@
             <th>Nombre</th>
             <th>Código</th>
             <th>Horas Semanales</th>
-            @if (isAdmin) {
-              <th>Acciones</th>
-            }
+            @if (isAdmin) { <th>Acciones</th> }
           </tr>
         </thead>
         <tbody>
-          @for (asignatura of asignaturas; track asignatura.id) {
+          @for (asignatura of asignaturasFiltradas(); track asignatura.id) {
             <tr>
               <td>{{ asignatura.id }}</td>
               <td>{{ asignatura.nombre }}</td>
@@ -51,12 +72,8 @@
               </td>
               @if (isAdmin) {
                 <td>
-                  <button (click)="irAEditar(asignatura.id)" class="btn btn-warning me-1" title="Editar">
-                    ✏️
-                  </button>
-                  <button (click)="eliminarAsignatura(asignatura.id)" class="btn btn-danger" title="Eliminar">
-                    🗑️
-                  </button>
+                  <button (click)="irAEditar(asignatura.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
+                  <button (click)="eliminarAsignatura(asignatura.id)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
             </tr>
@@ -66,9 +83,16 @@
     </div>
   }
 
-  @if (!loading && asignaturas.length === 0) {
+  <!-- Sin datos (con o sin filtro) -->
+  @if (!loading && asignaturasFiltradas().length === 0) {
     <div class="text-center py-5">
-      <p class="text-muted">📭 No hay asignaturas registradas</p>
+      <p class="text-muted">
+        @if (filtroBusqueda) {
+          🔍 No se encontraron asignaturas para "{{ filtroBusqueda }}"
+        } @else {
+          📭 No hay asignaturas registradas
+        }
+      </p>
     </div>
   }
 </div>

@@ -1,30 +1,53 @@
 <!-- src/app/features/aulas/lista-aulas/lista-aulas.component.html -->
 <div class="container">
+  <!-- Breadcrumb -->
   <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
+    <button class="crumb-btn" (click)="irADashboard()">
+      <i class="ti ti-arrow-left"></i> Dashboard
+    </button>
     <span class="crumb-sep">/</span>
     <span class="crumb-current">Aulas</span>
   </div>
+
+  <!-- Header con buscador y botón -->
   <div class="d-flex">
     <h2>🏫 Lista de Aulas</h2>
-    @if (isAdmin) {
-      <button (click)="irACrear()" class="btn-primary">
-        ➕ Nueva Aula
-      </button>
-    }
-  </div>
 
+    <div class="acciones-header">
+      
+
+      @if (isAdmin) {
+        <button (click)="irACrear()" class="btn-primary">
+           Agregar Aula
+        </button>
+      }
+    </div>
+  </div>
+<div class="buscador">
+        <input
+          type="text"
+          class="buscador-input"
+          placeholder="Buscar por nombre, tipo o capacidad..."
+          [(ngModel)]="filtroBusqueda"
+          name="filtroAulas">
+        @if (filtroBusqueda) {
+          <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
+        }
+      </div>
+  <!-- Error -->
   @if (errorMessage) {
     <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
   }
 
+  <!-- Loading -->
   @if (loading) {
     <div class="text-center">
-      <div class="spinner-border" role="status"></div>
+      <div class="spinner-border"></div>
     </div>
   }
 
-  @if (!loading && aulas.length > 0) {
+  <!-- Tabla -->
+  @if (!loading && aulasFiltradas().length > 0) {
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -33,13 +56,11 @@
             <th>Nombre</th>
             <th>Capacidad</th>
             <th>Tipo</th>
-            @if (isAdmin) {
-              <th>Acciones</th>
-            }
+            @if (isAdmin) { <th>Acciones</th> }
           </tr>
         </thead>
         <tbody>
-          @for (aula of aulas; track aula.id) {
+          @for (aula of aulasFiltradas(); track aula.id) {
             <tr>
               <td>{{ aula.id }}</td>
               <td>{{ aula.nombre }}</td>
@@ -51,12 +72,8 @@
               <td>{{ aula.tipo || '-' }}</td>
               @if (isAdmin) {
                 <td>
-                  <button (click)="irAEditar(aula.id)" class="btn btn-warning me-1" title="Editar">
-                    ✏️
-                  </button>
-                  <button (click)="eliminarAula(aula.id)" class="btn btn-danger" title="Eliminar">
-                    🗑️
-                  </button>
+                  <button (click)="irAEditar(aula.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
+                  <button (click)="eliminarAula(aula.id)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
             </tr>
@@ -66,9 +83,16 @@
     </div>
   }
 
-  @if (!loading && aulas.length === 0) {
+  <!-- Sin datos (con o sin filtro) -->
+  @if (!loading && aulasFiltradas().length === 0) {
     <div class="text-center py-5">
-      <p class="text-muted">📭 No hay aulas registradas</p>
+      <p class="text-muted">
+        @if (filtroBusqueda) {
+          🔍 No se encontraron aulas para "{{ filtroBusqueda }}"
+        } @else {
+          📭 No hay aulas registradas
+        }
+      </p>
     </div>
   }
 </div>

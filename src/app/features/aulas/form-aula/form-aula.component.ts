@@ -1,5 +1,5 @@
 // src/app/features/aulas/form-aula/form-aula.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AulaService } from '../../../core/services/aula.service';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +35,8 @@ export class FormAulaComponent implements OnInit {
   constructor(
     private aulaService: AulaService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +53,7 @@ export class FormAulaComponent implements OnInit {
       next: (response) => {
         this.aula = response.data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;

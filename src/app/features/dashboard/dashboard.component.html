@@ -16,6 +16,9 @@
         <span>🔍</span>
         <input type="text" placeholder="Buscar docente, curso o asignatura">
       </div>
+      @if (usuario?.rol === 'ADMINISTRADOR') {
+  
+}
 
       <div class="user-chip">
         <span class="user-icon">👤</span>
@@ -165,15 +168,25 @@
             </div>
             <span class="menu-arrow">→</span>
           </div>
+          
 
           <div class="menu-card" (click)="irAHorarios()">
   <div class="menu-icon">📅</div>
   <div class="menu-content">
-    <h3>Horarios</h3>
+    <h3>Generacion de Horarios con Algoritmo genetico</h3>
     <p>Generar horarios</p>
   </div>
   <span class="menu-arrow">→</span>
 </div>
+
+<div class="menu-card" (click)="irAAdmins()">
+    <div class="menu-icon">👑</div>
+    <div class="menu-content">
+      <h3>Administradores</h3>
+      <p>Gestionar administradores</p>
+    </div>
+    <span class="menu-arrow">→</span>
+  </div>
 
         }
       </div>

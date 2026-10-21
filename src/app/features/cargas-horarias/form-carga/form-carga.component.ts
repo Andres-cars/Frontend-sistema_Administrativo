@@ -1,5 +1,5 @@
 // src/app/features/cargas-horarias/form-carga/form-carga.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CargaHorariaService } from '../../../core/services/carga-horaria.service';
 import { DocenteService } from '../../../core/services/docente.service';
@@ -46,7 +46,8 @@ export class FormCargaComponent implements OnInit {
     private asignaturaService: AsignaturaService,
     private cursoService: CursoService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -65,14 +66,17 @@ export class FormCargaComponent implements OnInit {
     this.docenteService.getAll().subscribe({
       next: (response) => {
         this.docentes = response.data || [];
+        this.cdr.detectChanges();
       }
     });
+    
   }
 
   cargarAsignaturas(): void {
     this.asignaturaService.getAll().subscribe({
       next: (response) => {
         this.asignaturas = response.data || [];
+        this.cdr.detectChanges();
       }
     });
   }
@@ -81,6 +85,7 @@ export class FormCargaComponent implements OnInit {
     this.cursoService.getAll().subscribe({
       next: (response) => {
         this.cursos = response.data || [];
+        this.cdr.detectChanges();
       }
     });
   }
@@ -91,6 +96,7 @@ export class FormCargaComponent implements OnInit {
       next: (response) => {
         this.carga = response.data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;

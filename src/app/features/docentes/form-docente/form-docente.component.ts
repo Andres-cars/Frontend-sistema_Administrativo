@@ -1,5 +1,5 @@
 // src/app/features/docentes/form-docente/form-docente.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocenteService } from '../../../core/services/docente.service';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +28,8 @@ export class FormDocenteComponent implements OnInit {
   constructor(
     private docenteService: DocenteService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +46,7 @@ export class FormDocenteComponent implements OnInit {
       next: (response) => {
         this.docente = response.data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;
@@ -87,6 +89,7 @@ export class FormDocenteComponent implements OnInit {
           this.loading = false;
           this.successMessage = '✅ Docente actualizado correctamente';
           setTimeout(() => this.router.navigate(['/docentes']), 2000);
+          this.cdr.detectChanges();
         },
         error: (error) => {
           this.loading = false;

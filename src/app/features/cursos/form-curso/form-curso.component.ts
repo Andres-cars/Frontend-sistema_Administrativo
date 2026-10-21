@@ -1,5 +1,5 @@
 // src/app/features/cursos/form-curso/form-curso.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CursoService } from '../../../core/services/curso.service';
 import { FormsModule } from '@angular/forms';
@@ -33,7 +33,7 @@ export class FormCursoComponent implements OnInit {
   ];
 
   grados = [
-    '1ro', '2do', '3ro', '4to', '5to', '6to', '7mo',
+    'Inicial','1ro', '2do', '3ro', '4to', '5to', '6to', '7mo',
     '8vo', '9no', '10mo',
     '1ro BGU', '2do BGU', '3ro BGU'
   ];
@@ -43,7 +43,8 @@ export class FormCursoComponent implements OnInit {
   constructor(
     private cursoService: CursoService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +61,7 @@ export class FormCursoComponent implements OnInit {
       next: (response) => {
         this.curso = response.data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;

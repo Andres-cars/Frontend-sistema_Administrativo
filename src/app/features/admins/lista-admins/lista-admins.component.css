@@ -1,0 +1,259 @@
+/* Reutiliza estilos similares a la lista de docentes */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 30px 20px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.d-flex h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.table-responsive {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+.table thead th {
+  padding: 16px;
+  color: white;
+  font-size: 13px;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.badge {
+  padding: 4px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bg-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.me-1 { margin-right: 6px; }
+
+
+
+/*Nuevo estilo para las tablas */
+/* src/app/features/admins/lista-admins/lista-admins.component.css */
+
+:host {
+  --rojo: #A91B2E;
+  --rojo-oscuro: #6E0F1E;
+  --rojo-tint: #FBEAEC;
+  --tinta: #1A1A1F;
+  --slate: #5B5D66;
+  --slate-light: #8C8E96;
+  --papel: #F6F4EF;
+  --linea: #E4E1D8;
+  --linea-suave: #EDEBE3;
+  --verde: #3B6D11;
+  --verde-tint: #EAF3DE;
+
+  display: block;
+  min-height: 100vh;
+  background: var(--papel);
+  padding: 24px 32px 40px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+.container { max-width: 1000px; margin: 0 auto; }
+
+/* ============================================
+   BREADCRUMB
+   ============================================ */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  font-size: 13px; color: var(--slate);
+}
+.crumb-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--slate); display: flex; align-items: center; gap: 5px;
+  transition: color .15s ease;
+}
+.crumb-btn:hover { color: var(--rojo); }
+.crumb-btn i { font-size: 15px; }
+.crumb-sep { color: var(--slate-light); }
+.crumb-current { font-weight: 600; color: var(--tinta); }
+
+/* ============================================
+   HEADER
+   ============================================ */
+.d-flex {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 14px;
+}
+.d-flex h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 600; color: var(--tinta); margin: 0;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.btn-primary {
+  background: var(--rojo); color: #fff; border: none;
+  padding: 11px 18px; border-radius: 10px;
+  font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 13.5px;
+  cursor: pointer; display: flex; align-items: center; gap: 7px;
+  transition: background .15s ease;
+}
+.btn-primary:hover { background: var(--rojo-oscuro); }
+
+/* ============================================
+   ALERTAS
+   ============================================ */
+.alert {
+  padding: 12px 16px; border-radius: 10px; font-size: 13.5px; font-weight: 500;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 9px;
+}
+.alert-danger { background: var(--rojo-tint); color: #8A1F2D; border: 1px solid #F3C7CD; }
+
+/* ============================================
+   LOADING
+   ============================================ */
+.text-center { text-align: center; padding: 50px 0; }
+.spinner-border {
+  display: inline-block; width: 36px; height: 36px;
+  border: 3px solid var(--linea); border-top-color: var(--rojo);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+.spinner-border.text-primary { border-top-color: var(--rojo); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); border: 0;
+}
+
+/* ============================================
+   TABLA
+   ============================================ */
+.table-responsive {
+  background: #fff; border: 1px solid var(--linea); border-radius: 16px;
+  padding: 20px 22px; overflow-x: auto;
+}
+.table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 0; }
+
+.table thead { background: transparent; }
+.table thead th {
+  text-align: left; color: var(--slate); font-weight: 500; font-size: 11.5px;
+  text-transform: uppercase; letter-spacing: .04em;
+  padding: 0 10px 10px 0; border-bottom: 1px solid var(--linea); white-space: nowrap;
+}
+
+.table tbody tr { border-bottom: 1px solid var(--linea-suave); transition: background .15s ease; }
+.table tbody tr:last-child { border-bottom: none; }
+.table tbody tr:hover { background: var(--papel); }
+.table tbody td { padding: 12px 10px 12px 0; color: var(--tinta); vertical-align: middle; }
+.table tbody td:first-child { color: var(--slate); }
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge {
+  display: inline-block; padding: 4px 12px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 500; white-space: nowrap;
+}
+.badge.bg-primary { background: var(--rojo-tint); color: var(--rojo-oscuro); }
+.badge.bg-success { background: var(--verde-tint); color: var(--verde); }
+.badge.bg-secondary { background: #F0EEE7; color: var(--slate); }
+
+/* ============================================
+   BOTONES DE ACCIÓN EN LA TABLA
+   ============================================ */
+td .btn {
+  width: 30px; height: 30px; padding: 0;
+  border: 1px solid var(--linea); background: #fff; color: var(--slate);
+  border-radius: 8px; cursor: pointer; font-size: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all .15s ease;
+}
+td .btn.btn-warning:hover { border-color: var(--rojo); color: var(--rojo); background: #fff; }
+td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #fff; }
+.me-1 { margin-right: 6px; }
+
+/* ============================================
+   SIN DATOS
+   ============================================ */
+.py-5 { padding: 60px 0; }
+.text-muted { color: var(--slate-light); font-size: 14px; margin: 0; text-align: center; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  :host { padding: 16px; }
+  .d-flex { flex-direction: column; align-items: stretch; }
+  .d-flex h2 { font-size: 19px; justify-content: center; }
+  .btn-primary { justify-content: center; }
+  .table { font-size: 12px; }
+  .table-responsive { padding: 14px; }
+}
+
+@media (max-width: 576px) {
+  .table thead th { font-size: 10.5px; }
+  .table tbody td { font-size: 11.5px; }
+  .badge { font-size: 10.5px; padding: 3px 10px; }
+}

@@ -1,16 +1,15 @@
 <!-- src/app/features/horarios/ver-horario/ver-horario.component.html -->
 <div class="container">
   <!-- HEADER -->
-     <div class="breadcrumb">
+  <div class="breadcrumb">
     <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
     <span class="crumb-sep">/</span>
     <button class="crumb-btn" (click)="volver()">Horarios</button>
     <span class="crumb-sep">/</span>
     <span class="crumb-current">{{ horario?.nombre || 'Ver' }}</span>
-    
   </div>
+  
   <div class="header-actions">
-    
     <button class="btn btn-primary" (click)="imprimir()">
       🖨️ Imprimir
     </button>
@@ -29,7 +28,7 @@
 
   @if (!loading && horario) {
     <div class="horario-header">
-      <h2>📅 {{ horario.nombre }}</h2>
+      <h2><i class="ti ti-calendar-event"></i> {{ horario.nombre }}</h2>
       <p>Período: {{ horario.periodo_id }} | Jornada: {{ horario.jornada_id }}</p>
     </div>
 
@@ -69,6 +68,16 @@
                 </td>
               }
             </tr>
+            
+            <!-- ✅ FILA DEL RECREO INTERCALADA -->
+            @if (hora === '09:45') {
+              <tr class="recreo-row">
+                <td class="hora-cell">10:30</td>
+                <td class="recreo-cell" colspan="5">
+                  ☕ RECREO (10:30 - 10:50)
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

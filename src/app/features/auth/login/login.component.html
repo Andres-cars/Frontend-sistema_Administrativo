@@ -1,7 +1,7 @@
 <!-- ========================================= -->
 <!-- PANTALLA DE CARGA -->
 <!-- ========================================= -->
-<div class="login-loading-overlay" *ngIf="loading">
+<div class="login-loading-overlay" *ngIf="loading" role="status">
 
   <div class="loading-content">
 
@@ -11,7 +11,7 @@
       <!-- Logo de la institución -->
       <img
         src="assets/images/logo.png"
-        alt="Unidad Educativa Si Miao Wei Hua"
+        alt="Logo de la institución"
         class="loading-logo"
       />
 
@@ -96,7 +96,8 @@
     <!-- PANEL FORMULARIO -->
     <!-- ========================================= -->
 
-    <div class="form-panel">
+    <!-- ✅ CAMBIO: [class.shake] para la sacudida cuando hay error -->
+    <div class="form-panel" [class.shake]="errorShake">
 
       <p class="form-eyebrow">
         Acceso al sistema
@@ -118,18 +119,20 @@
             Usuario
           </label>
 
+          <!-- ✅ CAMBIO: is-invalid también con credenciales incorrectas + limpiarError() -->
           <input
             type="text"
             id="usuario"
             name="usuario"
             [(ngModel)]="usuario"
+            (ngModelChange)="limpiarError()"
             #usuarioInput="ngModel"
             required
             placeholder="Ingresa tu usuario"
             class="form-control"
             [class.is-invalid]="
-              usuarioInput.invalid &&
-              usuarioInput.touched
+              (usuarioInput.invalid && usuarioInput.touched) ||
+              credencialesInvalidas
             "
           />
 
@@ -156,18 +159,21 @@
 
           <div class="input-wrap">
 
+            <!-- ✅ CAMBIO: #passwordField (para enfocar) + is-invalid + limpiarError() -->
             <input
               [type]="showPassword ? 'text' : 'password'"
               id="password"
               name="password"
               [(ngModel)]="password"
+              (ngModelChange)="limpiarError()"
               #passwordInput="ngModel"
+              #passwordField
               required
               placeholder="Ingresa tu contraseña"
               class="form-control"
               [class.is-invalid]="
-                passwordInput.invalid &&
-                passwordInput.touched
+                (passwordInput.invalid && passwordInput.touched) ||
+                credencialesInvalidas
               "
             />
 
@@ -210,12 +216,14 @@
         </div>
 
 
-        <!-- ERROR -->
+        <!-- ✅ CAMBIO: role="alert" + ícono; es el mensaje que ve el usuario -->
         <div
           *ngIf="errorMessage"
-          class="alert alert-danger">
+          class="alert alert-danger"
+          role="alert">
 
-          {{ errorMessage }}
+          <i class="ti ti-alert-circle" aria-hidden="true"></i>
+          <span>{{ errorMessage }}</span>
 
         </div>
 

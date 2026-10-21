@@ -400,86 +400,56 @@
    CONTENEDOR DEL LOGO
    ========================================================= */
 
+/* Contenedor del logo (más pequeño) */
 .logo-loader {
   position: relative;
-
-  width: 190px;
-  height: 190px;
-
+  width: 110px;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
-
-/* Círculo exterior */
-
+/* Anillo giratorio */
 .logo-loader::before {
   content: '';
-
   position: absolute;
-
-  width: 180px;
-  height: 180px;
-
+  width: 104px;
+  height: 104px;
   border-radius: 50%;
-
-  border: 4px solid rgba(255, 255, 255, 0.18);
-
+  border: 3px solid rgba(255, 255, 255, 0.18);
   border-top-color: #ffffff;
   border-right-color: rgba(255, 255, 255, 0.65);
-
   animation: logoSpinner 1.2s linear infinite;
 }
 
-
-/* Segundo círculo */
-
+/* Anillo fino que pulsa */
 .logo-loader::after {
   content: '';
-
   position: absolute;
-
-  width: 158px;
-  height: 158px;
-
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
-
   border: 1px solid rgba(255, 255, 255, 0.25);
-
   animation: logoPulse 2s ease-in-out infinite;
 }
 
-
-/* =========================================================
-   LOGO
-   ========================================================= */
-
+/* Logo: pequeño y girando 360° */
 .loading-logo {
   position: relative;
-
   z-index: 2;
-
-  width: 125px;
-  height: 125px;
-
+  width: 68px;
+  height: 68px;
   object-fit: contain;
-
   border-radius: 50%;
-
   background: #fff;
-
   padding: 5px;
-
   box-sizing: border-box;
-
   box-shadow:
-    0 0 0 6px rgba(255, 255, 255, 0.08),
-    0 15px 45px rgba(0, 0, 0, 0.25);
-
-  animation: logoFloat 2s ease-in-out infinite;
+    0 0 0 4px rgba(255, 255, 255, 0.08),
+    0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: logoGiro 2.4s ease-in-out infinite;
 }
 
 
@@ -638,24 +608,14 @@
 }
 
 
-@keyframes logoFloat {
-
-  0%,
-  100% {
-
-    transform: translateY(0);
-
-  }
-
-  50% {
-
-    transform: translateY(-5px);
-
-  }
-
+@keyframes logoGiro {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
 }
 
-
+@media (max-width: 480px) {
+  .loading-content h3 { font-size: 21px; }
+}
 @keyframes loadingDot {
 
   0%,
@@ -719,4 +679,53 @@
 
   }
 
+}
+
+
+/* ============================================
+   ERROR DE LOGIN
+   Pega esto AL FINAL de login.component.css
+   ============================================ */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.alert i {
+  font-size: 17px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.alert-danger {
+  background: #FBEAEC;
+  color: #8A1F2D;
+  border: 1px solid #F3C7CD;
+}
+
+/* Campos en rojo cuando las credenciales no coinciden */
+.form-control.is-invalid {
+  border-color: #C0392B;
+  background: #FFF8F8;
+}
+.form-control.is-invalid:focus {
+  border-color: #C0392B;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+}
+
+/* Sacudida corta del formulario */
+.shake {
+  animation: shake 0.45s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(7px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shake { animation: none; }
 }

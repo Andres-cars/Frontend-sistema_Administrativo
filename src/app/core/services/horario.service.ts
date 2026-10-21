@@ -12,8 +12,8 @@ export class HorarioService {
   constructor(private http: HttpClient) {}
 
   // 🧬 Generar horario (sin guardar)
-  generar(periodoId: number, jornadaId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/generar`, { periodoId, jornadaId });
+  generar(periodoId: number, jornadaId: number, cursoId: number | null = null): Observable<any> {
+    return this.http.post(`${this.apiUrl}/generar`, { periodoId, jornadaId, cursoId  });
   }
 
   // 💾 Guardar horario

@@ -1,3 +1,4 @@
+
 // src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -16,9 +17,12 @@ import { ListaCargasComponent } from './features/cargas-horarias/lista-cargas/li
 import { FormCargaComponent } from './features/cargas-horarias/form-carga/form-carga.component';
 import { GenerarHorarioComponent } from './features/horarios/generar-horario/generar-horario.component';
 import { VerHorarioComponent } from './features/horarios/ver-horario/ver-horario.component';
+import { ListaAdminsComponent } from './features/admins/lista-admins/lista-admins.component';
+import { FormAdminComponent } from './features/admins/form-admin/form-admin.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -132,6 +136,25 @@ const routes: Routes = [
   component: VerHorarioComponent,
   canActivate: [authGuard, roleGuard],
   data: { roles: ['ADMINISTRADOR'] }
+},
+// RUTAS PARA ADMINISTRADORES
+{
+  path: 'admins',
+  component: ListaAdminsComponent,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: ['ADMINISTRADOR'] },
+},
+{
+  path: 'admins/crear',
+  component: FormAdminComponent,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: ['ADMINISTRADOR'] },
+},
+{
+  path: 'admins/editar/:id',
+  component: FormAdminComponent,
+  canActivate: [authGuard, roleGuard],
+  data: { roles: ['ADMINISTRADOR'] },
 },
 
   { path: '**', redirectTo: '/login' }

@@ -289,4 +289,39 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 
+/* ============================================
+   ESTILOS PARA EL RECREO
+============================================ */
+.recreo-row {
+  background-color: #fdfaf5;
+}
+
+.recreo-cell {
+  text-align: center;
+  font-weight: 700;
+  color: #C05621;
+  font-size: 12px;
+  padding: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--linea);
+}
+
+/* IMPRIMIR */
+@media print {
+  .header-actions, .breadcrumb { display: none; }
+  :host { background: white; padding: 0; }
+  .calendar { box-shadow: none; border: 1px solid #ccc; }
+  .clase-card { border: 1px solid #ccc; background: white; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  :host { padding: 16px 8px; }
+  .calendar-table { font-size: 10px; }
+  .clase-cell { min-width: 80px; padding: 3px; }
+  .clase-card { padding: 4px 6px; }
+  .clase-asignatura { font-size: 10px; }
+  .clase-docente, .clase-curso, .clase-aula { font-size: 9px; }
+}
 

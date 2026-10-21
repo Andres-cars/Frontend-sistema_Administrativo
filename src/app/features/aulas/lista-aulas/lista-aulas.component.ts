@@ -3,11 +3,15 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AulaService } from '../../../core/services/aula.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-lista-aulas',
   templateUrl: './lista-aulas.component.html',
-  styleUrls: ['./lista-aulas.component.css']
+  styleUrls: ['./lista-aulas.component.css'],
+  standalone: true,
+  imports: [FormsModule, CommonModule]
 })
 export class ListaAulasComponent implements OnInit {
   aulas: any[] = [];
@@ -15,7 +19,7 @@ export class ListaAulasComponent implements OnInit {
   errorMessage: string = '';
    successMessage: string = '';
   isAdmin: boolean = false;
-
+  filtroBusqueda: string = '';
   constructor(
     private aulaService: AulaService,
     private authService: AuthService,
@@ -91,4 +95,20 @@ export class ListaAulasComponent implements OnInit {
    irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
+
+
+  aulasFiltradas(): any[] {
+  if (!this.filtroBusqueda) return this.aulas;
+  const q = this.filtroBusqueda.toLowerCase().trim();
+  return this.aulas.filter(a =>
+    (a.nombre || '').toLowerCase().includes(q) ||
+    (a.tipo || '').toLowerCase().includes(q) ||
+    (a.capacidad?.toString() || '').includes(q)
+  );
+}
+
+// Método para limpiar
+limpiarFiltro(): void {
+  this.filtroBusqueda = '';
+}
 }

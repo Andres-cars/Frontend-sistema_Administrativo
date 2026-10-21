@@ -405,7 +405,129 @@ h2 i { color: var(--rojo); }
 .btn-secondary { background: #fff; color: var(--tinta); border: 1px solid var(--linea); }
 .btn-secondary:hover { border-color: var(--slate); }
 
+/* =========================================
+   VERIFICACIÓN DE COMPLETITUD
+========================================= */
 
+.completitud {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.completitud.completo {
+  background: #f0fff4;
+  border: 2px solid #48bb78;
+}
+
+.completitud.incompleto {
+  background: #fffaf0;
+  border: 2px solid #ed8936;
+}
+
+.completitud-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.completitud-text h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #2d3748;
+}
+
+.completitud-text p {
+  margin: 4px 0;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.completitud-text strong {
+  color: #2d3748;
+  font-weight: 700;
+}
+
+/* =========================================
+   DESGLOSE POR CURSO
+========================================= */
+
+.desglose {
+  background: #f7fafc;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.desglose h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #2d3748;
+}
+
+.desglose-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.desglose-table thead th {
+  padding: 10px 12px;
+  text-align: left;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.desglose-table tbody td {
+  padding: 10px 12px;
+  color: #2d3748;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.desglose-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.badge-success {
+  background: #48bb78;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-danger {
+  background: #f56565;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .completitud {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .desglose-table {
+    font-size: 12px;
+  }
+
+  .desglose-table thead th,
+  .desglose-table tbody td {
+    padding: 8px 6px;
+  }
+}
 
 
 
@@ -417,3 +539,94 @@ h2 i { color: var(--rojo); }
 
 
 
+/* =========================================
+   PANTALLA DE CARGA (OVERLAY)
+========================================= */
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(23, 24, 28, 0.7); /* Fondo oscuro semi-transparente */
+  backdrop-filter: blur(8px); /* Efecto de desenfoque moderno */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Asegura que esté por encima de todo */
+  animation: fadeIn 0.3s ease-out;
+}
+
+.loading-content {
+  background: white;
+  padding: 40px 60px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+}
+
+/* Animación del icono del ADN */
+.dna-spinner {
+  font-size: 60px;
+  animation: spinPulse 1.5s infinite linear;
+  margin-bottom: 20px;
+}
+
+@keyframes spinPulse {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.loading-content h3 {
+  color: var(--rojo, #A91B2E);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+
+.loading-content p {
+  color: #6B6D75;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.loading-subtext {
+  font-size: 12px !important;
+  color: #9698A0 !important;
+  margin-top: 10px !important;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Pegar AL FINAL de generar-horario.component.css */
+.alert-danger {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.alert-icon {
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.alert-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.alert-body .btn-sm {
+  padding: 6px 12px;
+  font-size: 12.5px;
+}

@@ -1,5 +1,5 @@
 // src/app/features/horarios/ver-horario/ver-horario.component.ts
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HorarioService } from '../../../core/services/horario.service';
 
@@ -13,16 +13,24 @@ export class VerHorarioComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
 
-  // Estructura del calendario
+  // ✅ Horarios reales del colegio
   dias: string[] = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES'];
-  horas: string[] = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00'];
+  horas: string[] = [
+    '07:30', 
+    '08:15', 
+    '09:00', 
+    '09:45', 
+    '10:50', 
+    '11:35', 
+    '12:20'
+  ];
+  
   grid: any = {};
-  successMessage: string = '';
 
   constructor(
     private horarioService: HorarioService,
     private route: ActivatedRoute,
-    private router: Router, 
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -35,14 +43,12 @@ export class VerHorarioComponent implements OnInit {
 
   cargarHorario(id: number): void {
     this.loading = true;
-    this.errorMessage = '';
-
     this.horarioService.getById(id).subscribe({
       next: (response) => {
         this.horario = response.data;
         this.construirGrid();
         this.loading = false;
-         this.cdr.detectChanges();
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Error al cargar horario';
@@ -51,10 +57,6 @@ export class VerHorarioComponent implements OnInit {
     });
   }
 
-  /**
-   * Construye el grid del calendario
-   * grid[dia][hora] = clase
-   */
   construirGrid(): void {
     this.grid = {};
 
@@ -70,7 +72,9 @@ export class VerHorarioComponent implements OnInit {
     if (this.horario?.detalles) {
       for (const detalle of this.horario.detalles) {
         const dia = detalle.dia_semana;
-        const hora = detalle.hora_inicio.substring(0, 5); // '07:00'
+        
+        // ✅ Extraemos la hora exacta del backend (ej: '07:30:00' -> '07:30')
+        const hora = detalle.hora_inicio.substring(0, 5); 
 
         if (this.grid[dia] && this.grid[dia][hora] !== undefined) {
           this.grid[dia][hora] = detalle;

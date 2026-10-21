@@ -1,5 +1,5 @@
 // src/app/features/asignaturas/form-asignatura/form-asignatura.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsignaturaService } from '../../../core/services/asignatura.service';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +26,8 @@ export class FormAsignaturaComponent implements OnInit {
   constructor(
     private asignaturaService: AsignaturaService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +44,7 @@ export class FormAsignaturaComponent implements OnInit {
       next: (response) => {
         this.asignatura = response.data;
         this.loading = false;
+         this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;

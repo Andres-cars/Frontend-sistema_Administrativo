@@ -22,7 +22,7 @@ export class ListaCursosComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   isAdmin: boolean = false;
-
+filtroBusqueda: string = '';
   constructor(
     private cursoService: CursoService,
     private authService: AuthService,
@@ -106,4 +106,24 @@ export class ListaCursosComponent implements OnInit {
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
+
+
+  cursosFiltrados(): any[] {
+  if (!this.filtroBusqueda) return this.cursos;
+  const q = this.filtroBusqueda.toLowerCase().trim();
+  return this.cursos.filter(c => {
+    const nombreCompleto = `${c.nivel} ${c.grado} "${c.paralelo}"`.toLowerCase();
+    return (
+      (c.nivel || '').toLowerCase().includes(q) ||
+      (c.grado || '').toLowerCase().includes(q) ||
+      (c.paralelo || '').toLowerCase().includes(q) ||
+      nombreCompleto.includes(q)
+    );
+  });
+}
+
+// Método para limpiar
+limpiarFiltro(): void {
+  this.filtroBusqueda = '';
+}
 }
