@@ -8,7 +8,6 @@ import { CursoService } from '../../../core/services/curso.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-
 @Component({
   selector: 'app-form-carga',
   standalone: true,
@@ -69,7 +68,6 @@ export class FormCargaComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
-    
   }
 
   cargarAsignaturas(): void {
@@ -101,6 +99,7 @@ export class FormCargaComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar carga horaria';
+        this.cdr.detectChanges(); // ✅
       }
     });
   }
@@ -128,11 +127,13 @@ export class FormCargaComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.successMessage = '✅ Carga horaria actualizada correctamente';
+          this.cdr.detectChanges(); // ✅
           setTimeout(() => this.router.navigate(['/cargas-horarias']), 2000);
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar';
+          this.cdr.detectChanges(); // ✅
         }
       });
     } else {
@@ -140,18 +141,22 @@ export class FormCargaComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.successMessage = '✅ Carga horaria creada correctamente';
+          this.cdr.detectChanges(); // ✅
           setTimeout(() => this.router.navigate(['/cargas-horarias']), 2000);
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al crear';
+          this.cdr.detectChanges(); // ✅
         }
       });
     }
   }
+
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
+
   cancelar(): void {
     this.router.navigate(['/cargas-horarias']);
   }

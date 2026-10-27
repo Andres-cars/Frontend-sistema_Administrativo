@@ -24,7 +24,7 @@ import { GenerarHorarioComponent } from './features/horarios/generar-horario/gen
 import { VerHorarioComponent } from './features/horarios/ver-horario/ver-horario.component';
 import { ListaAdminsComponent } from './features/admins/lista-admins/lista-admins.component';
 import { FormAdminComponent } from './features/admins/form-admin/form-admin.component';
-
+import { LayoutComponent } from './layout/layout.component'; // ✅ LAYOUT
 @NgModule({
   declarations: [App],
   imports: [
@@ -48,6 +48,7 @@ import { FormAdminComponent } from './features/admins/form-admin/form-admin.comp
     VerHorarioComponent,
     ListaAdminsComponent,
     FormAdminComponent,
+    LayoutComponent,
   ],
   providers: [
     {

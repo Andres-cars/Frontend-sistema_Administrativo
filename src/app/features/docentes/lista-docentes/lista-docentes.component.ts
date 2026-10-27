@@ -2,15 +2,15 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { DocenteService } from '../../../core/services/docente.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router'; // ✅ MODAL: RouterOutlet
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-lista-docentes',
   templateUrl: './lista-docentes.component.html',
   styleUrls: ['./lista-docentes.component.css'],
-   standalone: true,
-  imports: [FormsModule, CommonModule]
+  standalone: true,
+  imports: [FormsModule, CommonModule, RouterOutlet] // ✅ MODAL: RouterOutlet
 })
 export class ListaDocentesComponent implements OnInit {
 
@@ -51,6 +51,21 @@ export class ListaDocentesComponent implements OnInit {
 
         this.cdr.detectChanges();
 
+      }, 3500);
+    }
+
+    this.cargarDocentes();
+  }
+
+  // ✅ MODAL: se ejecuta cuando el formulario (modal) se cierra al guardar o cancelar
+  alCerrarFormulario(): void {
+    const msg = this.router.getCurrentNavigation()?.extras?.state?.['successMessage'];
+
+    if (msg) {
+      this.successMessage = msg;
+      setTimeout(() => {
+        this.successMessage = '';
+        this.cdr.detectChanges();
       }, 3500);
     }
 
@@ -146,21 +161,21 @@ export class ListaDocentesComponent implements OnInit {
 
   }
 
-  
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
   docentesFiltrados(): any[] {
-  if (!this.filtroBusqueda) return this.docentes;
-  const q = this.filtroBusqueda.toLowerCase().trim();
-  return this.docentes.filter(d =>
-    (d.nombres || '').toLowerCase().includes(q) ||
-    (d.apellidos || '').toLowerCase().includes(q) ||
-    (d.identificacion || '').toLowerCase().includes(q)
-  );
-}
-limpiarFiltro(): void {
-  this.filtroBusqueda = '';
-}
+    if (!this.filtroBusqueda) return this.docentes;
+    const q = this.filtroBusqueda.toLowerCase().trim();
+    return this.docentes.filter(d =>
+      (d.nombres || '').toLowerCase().includes(q) ||
+      (d.apellidos || '').toLowerCase().includes(q) ||
+      (d.identificacion || '').toLowerCase().includes(q)
+    );
+  }
+
+  limpiarFiltro(): void {
+    this.filtroBusqueda = '';
+  }
 }

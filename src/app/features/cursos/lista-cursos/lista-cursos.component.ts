@@ -1,6 +1,6 @@
 // src/app/features/cursos/lista-cursos/lista-cursos.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router'; // ✅ MODAL
 import { CursoService } from '../../../core/services/curso.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    RouterOutlet // ✅ MODAL
   ],
   styleUrls: ['./lista-cursos.component.css']
 })
@@ -22,7 +23,8 @@ export class ListaCursosComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   isAdmin: boolean = false;
-filtroBusqueda: string = '';
+  filtroBusqueda: string = '';
+
   constructor(
     private cursoService: CursoService,
     private authService: AuthService,
@@ -35,39 +37,47 @@ filtroBusqueda: string = '';
 
     console.log('📋 isAdmin:', this.isAdmin);
 
-    // Revisar si venimos de guardar un docente
+    // Revisar si venimos de guardar un curso
     const navigation = this.router.getCurrentNavigation();
 
     if (navigation?.extras?.state?.['successMessage']) {
-
-      this.successMessage =
-        navigation.extras.state['successMessage'];
+      this.successMessage = navigation.extras.state['successMessage'];
 
       setTimeout(() => {
-
         this.successMessage = '';
-
         this.cdr.detectChanges();
-
       }, 3500);
     }
+    this.cargarCursos();
+  }
+
+  // ✅ MODAL: se ejecuta cuando el formulario se cierra (guardar o cancelar)
+  alCerrarFormulario(): void {
+    const msg = this.router.getCurrentNavigation()?.extras?.state?.['successMessage'];
+
+    if (msg) {
+      this.successMessage = msg;
+      setTimeout(() => {
+        this.successMessage = '';
+        this.cdr.detectChanges();
+      }, 3500);
+    }
+
     this.cargarCursos();
   }
 
   cargarCursos(): void {
     this.loading = true;
     this.errorMessage = '';
-     console.log('📡 Cargando Cursos...');
+    console.log('📡 Cargando Cursos...');
 
     this.cursoService.getAll().subscribe({
       next: (response) => {
         console.log('✅ Respuesta recibida:', response);
-
         console.log('👨‍🏫 Datos:', response.data);
         this.cursos = response.data || [];
         this.loading = false;
         console.log('✅ Cursos cargados:', this.cursos.length);
-
         console.log('🔄 Loading:', this.loading);
 
         // Forzar actualización visual
@@ -77,6 +87,7 @@ filtroBusqueda: string = '';
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar cursos';
         console.error('❌ Error:', error);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -102,28 +113,26 @@ filtroBusqueda: string = '';
       }
     });
   }
-   // ✅ NUEVO: regresar al dashboard principal
+
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
-
   cursosFiltrados(): any[] {
-  if (!this.filtroBusqueda) return this.cursos;
-  const q = this.filtroBusqueda.toLowerCase().trim();
-  return this.cursos.filter(c => {
-    const nombreCompleto = `${c.nivel} ${c.grado} "${c.paralelo}"`.toLowerCase();
-    return (
-      (c.nivel || '').toLowerCase().includes(q) ||
-      (c.grado || '').toLowerCase().includes(q) ||
-      (c.paralelo || '').toLowerCase().includes(q) ||
-      nombreCompleto.includes(q)
-    );
-  });
-}
+    if (!this.filtroBusqueda) return this.cursos;
+    const q = this.filtroBusqueda.toLowerCase().trim();
+    return this.cursos.filter(c => {
+      const nombreCompleto = `${c.nivel} ${c.grado} "${c.paralelo}"`.toLowerCase();
+      return (
+        (c.nivel || '').toLowerCase().includes(q) ||
+        (c.grado || '').toLowerCase().includes(q) ||
+        (c.paralelo || '').toLowerCase().includes(q) ||
+        nombreCompleto.includes(q)
+      );
+    });
+  }
 
-// Método para limpiar
-limpiarFiltro(): void {
-  this.filtroBusqueda = '';
-}
+  limpiarFiltro(): void {
+    this.filtroBusqueda = '';
+  }
 }

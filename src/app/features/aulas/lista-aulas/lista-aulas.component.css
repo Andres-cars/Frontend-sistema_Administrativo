@@ -203,3 +203,51 @@ td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #f
     width: 100%;
   }
 }
+
+/* ✅ Toast de éxito */
+.success-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-left: 5px solid #10b981;
+  color: #065f46;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 12px 0;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, .15);
+  animation: toastIn .25s ease;
+}
+
+.success-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  font-size: 14px;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #065f46;
+  cursor: pointer;
+  opacity: .6;
+}
+.toast-close:hover { opacity: 1; }
+
+@keyframes toastIn { from { opacity: 0; transform: translateY(-10px) } to { opacity: 1; transform: none } }

@@ -9,31 +9,43 @@
     <span class="crumb-current">Asignaturas</span>
   </div>
 
-  <!-- Header con buscador y botón -->
+  <!-- Header con botón -->
   <div class="d-flex">
     <h2>📖 Lista de Asignaturas</h2>
 
     <div class="acciones-header">
-      
-
       @if (isAdmin) {
         <button (click)="irACrear()" class="btn-primary">
-          Agregar Asignatura
+          ➕ Agregar Asignatura
         </button>
       }
     </div>
   </div>
-<div class="buscador">
-        <input
-          type="text"
-          class="buscador-input"
-          placeholder="Buscar por nombre o código..."
-          [(ngModel)]="filtroBusqueda"
-          name="filtroAsignaturas">
-        @if (filtroBusqueda) {
-          <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
-        }
+
+  <div class="buscador">
+    <input
+      type="text"
+      class="buscador-input"
+      placeholder="Buscar por nombre o código..."
+      [(ngModel)]="filtroBusqueda"
+      name="filtroAsignaturas">
+    @if (filtroBusqueda) {
+      <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
+    }
+  </div>
+
+  <!-- ✅ Toast de éxito -->
+  @if (successMessage) {
+    <div class="success-toast">
+      <div class="success-icon">✓</div>
+      <div class="success-content">
+        <strong>¡Éxito!</strong>
+        <span>{{ successMessage }}</span>
       </div>
+      <button type="button" class="toast-close" (click)="successMessage = ''">×</button>
+    </div>
+  }
+
   <!-- Error -->
   @if (errorMessage) {
     <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
@@ -95,4 +107,7 @@
       </p>
     </div>
   }
+
+  <!-- ✅ MODAL: aquí se dibuja el formulario encima de la lista -->
+  <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

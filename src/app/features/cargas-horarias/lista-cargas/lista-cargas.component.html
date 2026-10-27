@@ -5,14 +5,27 @@
     <span class="crumb-sep">/</span>
     <span class="crumb-current">Cargas horarias</span>
   </div>
+
   <div class="d-flex">
     <h2>📋 Lista de Cargas Horarias</h2>
     @if (isAdmin) {
       <button (click)="irACrear()" class="btn-primary">
-        Agregar Carga de Horario
+        ➕ Agregar Carga Horaria
       </button>
     }
   </div>
+
+  <!-- ✅ Toast de éxito -->
+  @if (successMessage) {
+    <div class="success-toast">
+      <div class="success-icon">✓</div>
+      <div class="success-content">
+        <strong>¡Éxito!</strong>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button type="button" class="toast-close" (click)="successMessage = ''">×</button>
+    </div>
+  }
 
   @if (errorMessage) {
     <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
@@ -59,12 +72,8 @@
               </td>
               @if (isAdmin) {
                 <td>
-                  <button (click)="irAEditar(carga.id)" class="btn btn-warning me-1" title="Editar">
-                    ✏️
-                  </button>
-                  <button (click)="eliminarCarga(carga.id)" class="btn btn-danger" title="Eliminar">
-                    🗑️
-                  </button>
+                  <button (click)="irAEditar(carga.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
+                  <button (click)="eliminarCarga(carga.id)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
             </tr>
@@ -79,4 +88,7 @@
       <p class="text-muted">📭 No hay cargas horarias registradas</p>
     </div>
   }
+
+  <!-- ✅ MODAL: aquí se dibuja el formulario encima de la lista -->
+  <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

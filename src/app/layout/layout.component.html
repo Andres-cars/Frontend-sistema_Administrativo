@@ -1,0 +1,66 @@
+<!-- src/app/layout/layout.component.html -->
+<div class="layout" [class.sidebar-cerrado]="!sidebarAbierto" [class.movil]="esMovil">
+
+  <!-- ===== MENÚ LATERAL ===== -->
+  <aside class="sidebar" [class.abierto]="sidebarAbierto">
+    <div class="sidebar-brand">
+      <div class="brand-logo">🎓</div>
+      <div class="brand-text">
+        <strong>Si Miao Wei Hua</strong>
+        <small>Gestión académica</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (seccion of menu; track seccion.titulo) {
+        @if (!seccion.soloAdmin || esAdmin) {
+          <p class="nav-titulo">{{ seccion.titulo }}</p>
+          @for (item of seccion.items; track item.ruta) {
+            <a class="nav-item"
+               [routerLink]="item.ruta"
+               routerLinkActive="activo"
+               [routerLinkActiveOptions]="{ exact: !!item.exacto }">
+              <span class="nav-icono">{{ item.icono }}</span>
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          }
+        }
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      Sistema de gestión académica · v1.0
+    </div>
+  </aside>
+
+  <!-- Fondo oscuro detrás del menú (solo celular) -->
+  @if (esMovil && sidebarAbierto) {
+    <div class="sidebar-backdrop" (click)="cerrarSidebar()"></div>
+  }
+
+  <!-- ===== ZONA PRINCIPAL ===== -->
+  <div class="main">
+    <header class="layout-topbar">
+      <button type="button" class="btn-menu" (click)="toggleSidebar()" title="Menú">☰</button>
+
+      <div class="topbar-spacer"></div>
+
+      <div class="user-chip">
+        <span class="avatar">{{ inicial }}</span>
+        <span class="user-name">{{ usuario?.usuario || 'Usuario' }}</span>
+      </div>
+
+      <span class="role-badge" [class.role-admin]="esAdmin" [class.role-docente]="!esAdmin">
+        {{ usuario?.rol || 'USUARIO' }}
+      </span>
+
+      <button type="button" class="btn-logout" (click)="logout()">
+        🚪 <span class="logout-text">Salir</span>
+      </button>
+    </header>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

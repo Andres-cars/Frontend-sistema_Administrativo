@@ -14,27 +14,25 @@
     <h2>👨‍🏫 Lista de Docentes</h2>
 
     <div class="acciones-header">
-      <!-- Buscador -->
-      
-
       @if (isAdmin) {
         <button (click)="irACrear()" class="btn-primary">
-           Agregar Docente
+          ➕ Agregar Docente
         </button>
       }
     </div>
   </div>
+
   <div class="buscador">
-        <input
-          type="text"
-          class="buscador-input"
-          placeholder="Buscar por cédula, nombre o apellido..."
-          [(ngModel)]="filtroBusqueda"
-          name="filtroDocentes">
-        @if (filtroBusqueda) {
-          <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
-        }
-      </div>
+    <input
+      type="text"
+      class="buscador-input"
+      placeholder="Buscar por cédula, nombre o apellido..."
+      [(ngModel)]="filtroBusqueda"
+      name="filtroDocentes">
+    @if (filtroBusqueda) {
+      <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
+    }
+  </div>
 
   <!-- Toast de éxito -->
   @if (successMessage) {
@@ -72,6 +70,7 @@
             <th>Identificación</th>
             <th>Especialidad</th>
             <th>Usuario</th>
+            <th>Disponibilidad</th>
             @if (isAdmin) { <th>Acciones</th> }
           </tr>
         </thead>
@@ -89,6 +88,9 @@
                 } @else {
                   <span class="badge bg-secondary">Sin usuario</span>
                 }
+              </td>
+              <td>
+                <span class="badge bg-info" style="font-size: 10px;">Lun-Vie (07:30-13:05)</span>
               </td>
               @if (isAdmin) {
                 <td>
@@ -115,4 +117,7 @@
       </p>
     </div>
   }
+
+  <!-- ✅ MODAL: aquí se dibuja el formulario encima de la lista -->
+  <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

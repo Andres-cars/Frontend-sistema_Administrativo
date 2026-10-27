@@ -1,13 +1,16 @@
 // src/app/features/cargas-horarias/lista-cargas/lista-cargas.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router'; // ✅ MODAL
+import { CommonModule } from '@angular/common';          // ✅
 import { CargaHorariaService } from '../../../core/services/carga-horaria.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-lista-cargas',
   templateUrl: './lista-cargas.component.html',
-  styleUrls: ['./lista-cargas.component.css']
+  styleUrls: ['./lista-cargas.component.css'],
+  standalone: true,                       // ✅
+  imports: [CommonModule, RouterOutlet]   // ✅ MODAL
 })
 export class ListaCargasComponent implements OnInit {
   cargas: any[] = [];
@@ -20,27 +23,38 @@ export class ListaCargasComponent implements OnInit {
     private cargaService: CargaHorariaService,
     private authService: AuthService,
     private router: Router,
-      private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
-    // Revisar si venimos de guardar un docente
+
+    // Revisar si venimos de guardar una carga
     const navigation = this.router.getCurrentNavigation();
 
     if (navigation?.extras?.state?.['successMessage']) {
-
-      this.successMessage =
-        navigation.extras.state['successMessage'];
+      this.successMessage = navigation.extras.state['successMessage'];
 
       setTimeout(() => {
-
         this.successMessage = '';
-
         this.cdr.detectChanges();
-
       }, 3500);
     }
+    this.cargarCargas();
+  }
+
+  // ✅ MODAL: se ejecuta cuando el formulario se cierra (guardar o cancelar)
+  alCerrarFormulario(): void {
+    const msg = this.router.getCurrentNavigation()?.extras?.state?.['successMessage'];
+
+    if (msg) {
+      this.successMessage = msg;
+      setTimeout(() => {
+        this.successMessage = '';
+        this.cdr.detectChanges();
+      }, 3500);
+    }
+
     this.cargarCargas();
   }
 
@@ -48,6 +62,7 @@ export class ListaCargasComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
     console.log('📡 Cargando Cargas Horarias...');
+
     this.cargaService.getAll().subscribe({
       next: (response) => {
         console.log('✅ Respuesta recibida:', response);
@@ -60,6 +75,7 @@ export class ListaCargasComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar cargas horarias';
+        this.cdr.detectChanges(); // ✅
       }
     });
   }
@@ -84,7 +100,8 @@ export class ListaCargasComponent implements OnInit {
       }
     });
   }
-   irADashboard(): void {
+
+  irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 }

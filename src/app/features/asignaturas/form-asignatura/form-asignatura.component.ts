@@ -44,11 +44,12 @@ export class FormAsignaturaComponent implements OnInit {
       next: (response) => {
         this.asignatura = response.data;
         this.loading = false;
-         this.cdr.detectChanges();
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar asignatura';
+        this.cdr.detectChanges(); // ✅
       }
     });
   }
@@ -74,11 +75,13 @@ export class FormAsignaturaComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.successMessage = '✅ Asignatura actualizada correctamente';
+          this.cdr.detectChanges(); // ✅
           setTimeout(() => this.router.navigate(['/asignaturas']), 2000);
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar asignatura';
+          this.cdr.detectChanges(); // ✅
         }
       });
     } else {
@@ -86,11 +89,13 @@ export class FormAsignaturaComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.successMessage = '✅ Asignatura creada correctamente';
+          this.cdr.detectChanges(); // ✅
           setTimeout(() => this.router.navigate(['/asignaturas']), 2000);
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al crear asignatura';
+          this.cdr.detectChanges(); // ✅
         }
       });
     }
@@ -99,6 +104,7 @@ export class FormAsignaturaComponent implements OnInit {
   cancelar(): void {
     this.router.navigate(['/asignaturas']);
   }
+
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }

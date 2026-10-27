@@ -58,6 +58,7 @@ export class FormAulaComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar aula';
+        this.cdr.detectChanges(); // ✅
       }
     });
   }
@@ -83,11 +84,13 @@ export class FormAulaComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.successMessage = '✅ Aula actualizada correctamente';
+          this.cdr.detectChanges(); // ✅
           setTimeout(() => this.router.navigate(['/aulas']), 2000);
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar aula';
+          this.cdr.detectChanges(); // ✅
         }
       });
     } else {
@@ -95,11 +98,13 @@ export class FormAulaComponent implements OnInit {
         next: () => {
           this.loading = false;
           this.successMessage = '✅ Aula creada correctamente';
+          this.cdr.detectChanges(); // ✅
           setTimeout(() => this.router.navigate(['/aulas']), 2000);
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al crear aula';
+          this.cdr.detectChanges(); // ✅
         }
       });
     }
@@ -108,7 +113,8 @@ export class FormAulaComponent implements OnInit {
   cancelar(): void {
     this.router.navigate(['/aulas']);
   }
-   irADashboard(): void {
+
+  irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 }

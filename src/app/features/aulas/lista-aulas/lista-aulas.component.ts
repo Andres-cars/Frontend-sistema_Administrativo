@@ -1,6 +1,6 @@
 // src/app/features/aulas/lista-aulas/lista-aulas.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router'; // ✅ MODAL
 import { AulaService } from '../../../core/services/aula.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -11,15 +11,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './lista-aulas.component.html',
   styleUrls: ['./lista-aulas.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule]
+  imports: [FormsModule, CommonModule, RouterOutlet] // ✅ MODAL
 })
 export class ListaAulasComponent implements OnInit {
   aulas: any[] = [];
   loading: boolean = false;
   errorMessage: string = '';
-   successMessage: string = '';
+  successMessage: string = '';
   isAdmin: boolean = false;
   filtroBusqueda: string = '';
+
   constructor(
     private aulaService: AulaService,
     private authService: AuthService,
@@ -31,22 +32,32 @@ export class ListaAulasComponent implements OnInit {
     this.isAdmin = this.authService.isAdmin();
     console.log('📋 isAdmin:', this.isAdmin);
 
-    // Revisar si venimos de guardar un docente
+    // Revisar si venimos de guardar un aula
     const navigation = this.router.getCurrentNavigation();
 
     if (navigation?.extras?.state?.['successMessage']) {
-
-      this.successMessage =
-        navigation.extras.state['successMessage'];
+      this.successMessage = navigation.extras.state['successMessage'];
 
       setTimeout(() => {
-
         this.successMessage = '';
-
         this.cdr.detectChanges();
-
       }, 3500);
     }
+    this.cargarAulas();
+  }
+
+  // ✅ MODAL: se ejecuta cuando el formulario se cierra (guardar o cancelar)
+  alCerrarFormulario(): void {
+    const msg = this.router.getCurrentNavigation()?.extras?.state?.['successMessage'];
+
+    if (msg) {
+      this.successMessage = msg;
+      setTimeout(() => {
+        this.successMessage = '';
+        this.cdr.detectChanges();
+      }, 3500);
+    }
+
     this.cargarAulas();
   }
 
@@ -54,6 +65,7 @@ export class ListaAulasComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
     console.log('📡 Cargando Aulas...');
+
     this.aulaService.getAll().subscribe({
       next: (response) => {
         console.log('✅ Respuesta recibida:', response);
@@ -61,13 +73,14 @@ export class ListaAulasComponent implements OnInit {
         this.aulas = response.data || [];
         this.loading = false;
         console.log('✅ Aulas cargadas:', this.aulas.length);
-         console.log('🔄 Loading:', this.loading);
-          this.cdr.detectChanges();
+        console.log('🔄 Loading:', this.loading);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar aulas';
-         console.error('❌ Error:', error);
+        console.error('❌ Error:', error);
+        this.cdr.detectChanges(); // ✅
       }
     });
   }
@@ -92,23 +105,22 @@ export class ListaAulasComponent implements OnInit {
       }
     });
   }
-   irADashboard(): void {
+
+  irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
-
   aulasFiltradas(): any[] {
-  if (!this.filtroBusqueda) return this.aulas;
-  const q = this.filtroBusqueda.toLowerCase().trim();
-  return this.aulas.filter(a =>
-    (a.nombre || '').toLowerCase().includes(q) ||
-    (a.tipo || '').toLowerCase().includes(q) ||
-    (a.capacidad?.toString() || '').includes(q)
-  );
-}
+    if (!this.filtroBusqueda) return this.aulas;
+    const q = this.filtroBusqueda.toLowerCase().trim();
+    return this.aulas.filter(a =>
+      (a.nombre || '').toLowerCase().includes(q) ||
+      (a.tipo || '').toLowerCase().includes(q) ||
+      (a.capacidad?.toString() || '').includes(q)
+    );
+  }
 
-// Método para limpiar
-limpiarFiltro(): void {
-  this.filtroBusqueda = '';
-}
+  limpiarFiltro(): void {
+    this.filtroBusqueda = '';
+  }
 }
