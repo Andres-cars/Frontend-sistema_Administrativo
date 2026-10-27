@@ -1,9 +1,10 @@
 // src/app/features/docentes/form-docente/form-docente.component.ts
-import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocenteService } from '../../../core/services/docente.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-form-docente',
   templateUrl: './form-docente.component.html',
@@ -52,6 +53,7 @@ export class FormDocenteComponent implements OnInit {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar docente';
         console.error('❌ Error:', error);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -83,51 +85,46 @@ export class FormDocenteComponent implements OnInit {
     };
 
     if (this.isEdit) {
-      // Editar
+      // ===== EDITAR =====
       this.docenteService.update(this.docente.id, data).subscribe({
-        next: (response) => {
+        next: () => {
           this.loading = false;
-          this.successMessage = '✅ Docente actualizado correctamente';
-          setTimeout(() => this.router.navigate(['/docentes']), 2000);
-          this.cdr.detectChanges();
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/docentes'], {
+            state: {
+              successTitle: 'Docente actualizado',
+              successMessage: 'Los cambios se guardaron correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar docente';
           console.error('❌ Error:', error);
+          this.cdr.detectChanges();
         }
       });
     } else {
-
-      // Crear
+      // ===== CREAR =====
       this.docenteService.create(data).subscribe({
-
-  next: (response) => {
-
-    this.loading = false;
-
-    console.log('✅ Docente creado:', response);
-
-    this.router.navigate(['/docentes'], {
-      state: {
-        successMessage: 'Docente guardado correctamente'
-      }
-    });
-
-  },
-
-  error: (error) => {
-
-    this.loading = false;
-
-    this.errorMessage =
-      error.error?.message ||
-      'Error al crear docente';
-
-    console.error('❌ Error:', error);
-  }
-
-});
+        next: (response) => {
+          this.loading = false;
+          console.log('✅ Docente creado:', response);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/docentes'], {
+            state: {
+              successTitle: 'Docente creado',
+              successMessage: 'El docente se registró correctamente.'
+            }
+          });
+        },
+        error: (error) => {
+          this.loading = false;
+          this.errorMessage = error.error?.message || 'Error al crear docente';
+          console.error('❌ Error:', error);
+          this.cdr.detectChanges();
+        }
+      });
     }
   }
 
@@ -135,7 +132,6 @@ export class FormDocenteComponent implements OnInit {
     this.router.navigate(['/docentes']);
   }
 
-  // ✅ NUEVO: regresar al dashboard principal
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }

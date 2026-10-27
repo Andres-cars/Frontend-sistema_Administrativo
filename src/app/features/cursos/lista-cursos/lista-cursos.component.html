@@ -1,13 +1,5 @@
 <!-- src/app/features/cursos/lista-cursos/lista-cursos.component.html -->
 <div class="container">
-  <!-- Breadcrumb -->
-  <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()">
-      <i class="ti ti-arrow-left"></i> Dashboard
-    </button>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">Cursos</span>
-  </div>
 
   <!-- Header con botón -->
   <div class="d-flex">
@@ -22,11 +14,12 @@
     </div>
   </div>
 
+  <!-- Buscador -->
   <div class="buscador">
     <input
       type="text"
       class="buscador-input"
-      placeholder="Buscar por nivel, grado o paralelo..."
+      placeholder="Buscar por nivel, grado, paralelo o aula..."
       [(ngModel)]="filtroBusqueda"
       name="filtroCursos">
     @if (filtroBusqueda) {
@@ -34,15 +27,16 @@
     }
   </div>
 
-  <!-- ✅ Toast de éxito (antes no existía en esta vista) -->
+  <!-- Toast flotante de éxito -->
   @if (successMessage) {
-    <div class="success-toast">
-      <div class="success-icon">✓</div>
-      <div class="success-content">
-        <strong>¡Éxito!</strong>
+    <div class="toast-flotante" role="status">
+      <div class="toast-check">✓</div>
+      <div class="toast-texto">
+        <strong>{{ successTitle }}</strong>
         <span>{{ successMessage }}</span>
       </div>
-      <button type="button" class="toast-close" (click)="successMessage = ''">×</button>
+      <button type="button" class="toast-cerrar" (click)="cerrarToast()" title="Cerrar">×</button>
+      <div class="toast-barra"></div>
     </div>
   }
 
@@ -69,12 +63,14 @@
             <th>Grado</th>
             <th>Paralelo</th>
             <th>Nombre Completo</th>
+            <th>Aula</th>
             @if (isAdmin) { <th>Acciones</th> }
           </tr>
         </thead>
         <tbody>
           @for (curso of cursosFiltrados(); track curso.id) {
-            <tr>
+            <!-- ✅ NUEVO: la fila se pinta si se está por eliminar -->
+            <tr [class.fila-eliminando]="eliminando?.id === curso.id">
               <td>{{ curso.id }}</td>
               <td>{{ curso.nivel }}</td>
               <td>{{ curso.grado }}</td>
@@ -84,10 +80,18 @@
                   {{ curso.nivel }} {{ curso.grado }} "{{ curso.paralelo }}"
                 </span>
               </td>
+              <td>
+                @if (nombreAula(curso)) {
+                  <span class="badge-aula">🏛️ {{ nombreAula(curso) }}</span>
+                } @else {
+                  <span class="badge-sin-aula">Sin aula</span>
+                }
+              </td>
               @if (isAdmin) {
                 <td>
                   <button (click)="irAEditar(curso.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
-                  <button (click)="eliminarCurso(curso.id)" class="btn btn-danger" title="Eliminar">🗑️</button>
+                  <!-- ✅ NUEVO: abre el diálogo en vez del confirm() -->
+                  <button (click)="pedirEliminar(curso)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
             </tr>
@@ -110,6 +114,17 @@
     </div>
   }
 
-  <!-- ✅ MODAL: aquí se dibuja el formulario encima de la lista -->
+  <!-- ✅ NUEVO: diálogo de confirmación para eliminar -->
+  @if (eliminando) {
+    <app-confirm-dialog
+      titulo="¿Eliminar este curso?"
+      [nombre]="eliminando.nombre"
+      [cargando]="eliminandoCargando"
+      (confirmar)="confirmarEliminar()"
+      (cancelar)="cancelarEliminar()">
+    </app-confirm-dialog>
+  }
+
+  <!-- MODAL: aquí se dibuja el formulario encima de la lista -->
   <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

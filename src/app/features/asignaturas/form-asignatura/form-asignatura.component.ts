@@ -49,7 +49,7 @@ export class FormAsignaturaComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar asignatura';
-        this.cdr.detectChanges(); // ✅
+        this.cdr.detectChanges();
       }
     });
   }
@@ -71,31 +71,41 @@ export class FormAsignaturaComponent implements OnInit {
     };
 
     if (this.isEdit) {
+      // ===== EDITAR =====
       this.asignaturaService.update(this.asignatura.id, data).subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = '✅ Asignatura actualizada correctamente';
-          this.cdr.detectChanges(); // ✅
-          setTimeout(() => this.router.navigate(['/asignaturas']), 2000);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/asignaturas'], {
+            state: {
+              successTitle: 'Asignatura actualizada',
+              successMessage: 'Los cambios se guardaron correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar asignatura';
-          this.cdr.detectChanges(); // ✅
+          this.cdr.detectChanges();
         }
       });
     } else {
+      // ===== CREAR =====
       this.asignaturaService.create(data).subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = '✅ Asignatura creada correctamente';
-          this.cdr.detectChanges(); // ✅
-          setTimeout(() => this.router.navigate(['/asignaturas']), 2000);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/asignaturas'], {
+            state: {
+              successTitle: 'Asignatura creada',
+              successMessage: 'La asignatura se registró correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al crear asignatura';
-          this.cdr.detectChanges(); // ✅
+          this.cdr.detectChanges();
         }
       });
     }

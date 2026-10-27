@@ -1,27 +1,40 @@
+<!-- src/app/features/admins/lista-admins/lista-admins.component.html -->
 <div class="container">
-   <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">Administradores</span>
-  </div>
 
+  <!-- Header con botón -->
   <div class="d-flex">
     <h2>👑 Administradores del Sistema</h2>
     <button (click)="irACrear()" class="btn-primary">
       ➕ Nuevo Administrador
     </button>
   </div>
- 
+
+  <!-- Toast flotante de éxito -->
+  @if (successMessage) {
+    <div class="toast-flotante" role="status">
+      <div class="toast-check">✓</div>
+      <div class="toast-texto">
+        <strong>{{ successTitle }}</strong>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button type="button" class="toast-cerrar" (click)="cerrarToast()" title="Cerrar">×</button>
+      <div class="toast-barra"></div>
+    </div>
+  }
+
+  <!-- Error -->
   @if (errorMessage) {
     <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
   }
 
+  <!-- Loading -->
   @if (loading) {
     <div class="text-center">
       <div class="spinner-border"></div>
     </div>
   }
 
+  <!-- Tabla -->
   @if (!loading && admins.length > 0) {
     <div class="table-responsive">
       <table class="table">
@@ -35,14 +48,19 @@
         </thead>
         <tbody>
           @for (admin of admins; track admin.id) {
-            <tr>
+            <tr [class.fila-eliminando]="eliminando?.id === admin.id">
               <td>{{ admin.id }}</td>
-              <td>{{ admin.usuario }}</td>
-              <td><span class="badge bg-primary">{{ admin.rol?.nombre }}</span></td>
               <td>
-                <button (click)="irAEditar(admin.id)" class="btn btn-warning me-1">✏️</button>
-                @if (admin.id !== usuarioActual?.id) {
-                  <button (click)="eliminarAdmin(admin.id)" class="btn btn-danger">🗑️</button>
+                {{ admin.usuario }}
+                @if (esUsuarioActual(admin)) {
+                  <span class="badge-tu">Tú</span>
+                }
+              </td>
+              <td><span class="badge bg-primary">{{ admin.rol?.nombre || 'ADMINISTRADOR' }}</span></td>
+              <td>
+                <button (click)="irAEditar(admin.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
+                @if (!esUsuarioActual(admin)) {
+                  <button (click)="pedirEliminar(admin)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 }
               </td>
             </tr>
@@ -52,9 +70,25 @@
     </div>
   }
 
+  <!-- Sin datos -->
   @if (!loading && admins.length === 0) {
     <div class="text-center py-5">
       <p class="text-muted">📭 No hay administradores registrados</p>
     </div>
   }
+
+  <!-- Diálogo de confirmación para eliminar -->
+  @if (eliminando) {
+    <app-confirm-dialog
+      titulo="¿Eliminar este administrador?"
+      [nombre]="eliminando.nombre"
+      mensaje="Perderá el acceso al sistema. Esta acción no se puede deshacer."
+      [cargando]="eliminandoCargando"
+      (confirmar)="confirmarEliminar()"
+      (cancelar)="cancelarEliminar()">
+    </app-confirm-dialog>
+  }
+
+  <!-- MODAL: aquí se dibuja el formulario encima de la lista -->
+  <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

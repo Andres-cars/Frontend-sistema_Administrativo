@@ -1,15 +1,7 @@
 <!-- src/app/features/docentes/lista-docentes/lista-docentes.component.html -->
 <div class="container">
-  <!-- Breadcrumb -->
-  <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()">
-      <i class="ti ti-arrow-left"></i> Dashboard
-    </button>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">Docentes</span>
-  </div>
 
-  <!-- Header con buscador y botón -->
+  <!-- Header con botón -->
   <div class="d-flex">
     <h2>👨‍🏫 Lista de Docentes</h2>
 
@@ -22,6 +14,7 @@
     </div>
   </div>
 
+  <!-- Buscador -->
   <div class="buscador">
     <input
       type="text"
@@ -34,15 +27,16 @@
     }
   </div>
 
-  <!-- Toast de éxito -->
+  <!-- Toast flotante de éxito -->
   @if (successMessage) {
-    <div class="success-toast">
-      <div class="success-icon">✓</div>
-      <div class="success-content">
-        <strong>¡Éxito!</strong>
+    <div class="toast-flotante" role="status">
+      <div class="toast-check">✓</div>
+      <div class="toast-texto">
+        <strong>{{ successTitle }}</strong>
         <span>{{ successMessage }}</span>
       </div>
-      <button type="button" class="toast-close" (click)="successMessage = ''">×</button>
+      <button type="button" class="toast-cerrar" (click)="cerrarToast()" title="Cerrar">×</button>
+      <div class="toast-barra"></div>
     </div>
   }
 
@@ -76,7 +70,8 @@
         </thead>
         <tbody>
           @for (docente of docentesFiltrados(); track docente.id) {
-            <tr>
+            <!-- ✅ NUEVO: la fila se pinta si se está por eliminar -->
+            <tr [class.fila-eliminando]="eliminando?.id === docente.id">
               <td>{{ docente.id }}</td>
               <td>{{ docente.nombres }}</td>
               <td>{{ docente.apellidos }}</td>
@@ -95,7 +90,8 @@
               @if (isAdmin) {
                 <td>
                   <button (click)="irAEditar(docente.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
-                  <button (click)="eliminarDocente(docente.id)" class="btn btn-danger" title="Eliminar">🗑️</button>
+                  <!-- ✅ NUEVO: abre el diálogo en vez del confirm() -->
+                  <button (click)="pedirEliminar(docente)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
             </tr>
@@ -118,6 +114,17 @@
     </div>
   }
 
-  <!-- ✅ MODAL: aquí se dibuja el formulario encima de la lista -->
+  <!-- ✅ NUEVO: diálogo de confirmación para eliminar -->
+  @if (eliminando) {
+    <app-confirm-dialog
+      titulo="¿Eliminar este docente?"
+      [nombre]="eliminando.nombre"
+      [cargando]="eliminandoCargando"
+      (confirmar)="confirmarEliminar()"
+      (cancelar)="cancelarEliminar()">
+    </app-confirm-dialog>
+  }
+
+  <!-- MODAL: aquí se dibuja el formulario encima de la lista -->
   <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

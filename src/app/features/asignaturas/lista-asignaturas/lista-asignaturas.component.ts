@@ -1,87 +1,109 @@
 // src/app/features/asignaturas/lista-asignaturas/lista-asignaturas.component.ts
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router'; // ✅ MODAL
-import { AsignaturaService } from '../../../core/services/asignatura.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+import { AsignaturaService } from '../../../core/services/asignatura.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // ✅ NUEVO
 
 @Component({
   selector: 'app-lista-asignaturas',
   templateUrl: './lista-asignaturas.component.html',
   styleUrls: ['./lista-asignaturas.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterOutlet] // ✅ MODAL
+  imports: [FormsModule, CommonModule, RouterOutlet, ConfirmDialogComponent] // ✅ NUEVO
 })
-export class ListaAsignaturasComponent implements OnInit {
+export class ListaAsignaturasComponent implements OnInit, OnDestroy {
+
   asignaturas: any[] = [];
   loading: boolean = false;
   errorMessage: string = '';
+
+  // Toast flotante
+  successTitle: string = '';
   successMessage: string = '';
+  private toastTimer: any;
+
   isAdmin: boolean = false;
   filtroBusqueda: string = '';
+
+  // ✅ NUEVO: confirmación de eliminar
+  eliminando: { id: number; nombre: string } | null = null;
+  eliminandoCargando = false;
 
   constructor(
     private asignaturaService: AsignaturaService,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
 
-    console.log('📋 isAdmin:', this.isAdmin);
+    // Si viene del buscador del dashboard, llenar el filtro
+    this.filtroBusqueda = this.route.snapshot.queryParamMap.get('buscar') || '';
 
-    // Revisar si venimos de guardar una asignatura
-    const navigation = this.router.getCurrentNavigation();
-
-    if (navigation?.extras?.state?.['successMessage']) {
-      this.successMessage = navigation.extras.state['successMessage'];
-
-      setTimeout(() => {
-        this.successMessage = '';
-        this.cdr.detectChanges(); // ✅ ahora va después de borrar el mensaje
-      }, 3500);
+    // Si venimos de guardar, mostrar aviso
+    const state = this.router.getCurrentNavigation()?.extras?.state;
+    if (state?.['successMessage']) {
+      this.mostrarToast(state['successTitle'] || '¡Éxito!', state['successMessage']);
     }
+
     this.cargarAsignaturas();
   }
 
-  // ✅ MODAL: se ejecuta cuando el formulario se cierra (guardar o cancelar)
-  alCerrarFormulario(): void {
-    const msg = this.router.getCurrentNavigation()?.extras?.state?.['successMessage'];
+  ngOnDestroy(): void {
+    clearTimeout(this.toastTimer);
+  }
 
-    if (msg) {
-      this.successMessage = msg;
-      setTimeout(() => {
-        this.successMessage = '';
-        this.cdr.detectChanges();
-      }, 3500);
+  // Se ejecuta cuando el modal se cierra (al guardar o cancelar)
+  alCerrarFormulario(): void {
+    const state = this.router.getCurrentNavigation()?.extras?.state;
+
+    if (state?.['successMessage']) {
+      this.mostrarToast(state['successTitle'] || '¡Éxito!', state['successMessage']);
     }
 
     this.cargarAsignaturas();
+  }
+
+  // Muestra la notificación flotante 4 segundos
+  mostrarToast(titulo: string, mensaje: string): void {
+    this.successTitle = titulo;
+    this.successMessage = mensaje;
+    this.cdr.detectChanges();
+
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => {
+      this.successMessage = '';
+      this.cdr.detectChanges();
+    }, 4000);
+  }
+
+  cerrarToast(): void {
+    clearTimeout(this.toastTimer);
+    this.successMessage = '';
   }
 
   cargarAsignaturas(): void {
     this.loading = true;
     this.errorMessage = '';
-    console.log('📡 Cargando Asignaturas...');
 
     this.asignaturaService.getAll().subscribe({
       next: (response) => {
-        console.log('✅ Respuesta recibida:', response);
-        console.log('👨‍🏫 Datos:', response.data);
-        this.asignaturas = response.data || [];
+        this.asignaturas = (response.data || []).sort((a: any, b: any) => a.id - b.id);
         this.loading = false;
-        console.log('✅ Asignaturas cargadas:', this.asignaturas.length);
-        console.log('🔄 Loading:', this.loading);
-        // Forzar actualización visual
         this.cdr.detectChanges();
       },
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar asignaturas';
-        this.cdr.detectChanges(); // ✅
+        console.error('❌ Error:', error);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -94,15 +116,41 @@ export class ListaAsignaturasComponent implements OnInit {
     this.router.navigate([`/asignaturas/editar/${id}`]);
   }
 
-  eliminarAsignatura(id: number): void {
-    if (!confirm('¿Estás seguro de eliminar esta asignatura?')) return;
+  // ===== ✅ NUEVO: ELIMINAR CON CONFIRMACIÓN =====
 
-    this.asignaturaService.delete(id).subscribe({
+  // 1. Al presionar 🗑️: abre el diálogo
+  pedirEliminar(asignatura: any): void {
+    this.eliminando = {
+      id: asignatura.id,
+      nombre: asignatura.codigo
+        ? `${asignatura.nombre} (${asignatura.codigo})`
+        : asignatura.nombre
+    };
+  }
+
+  // 2. Al presionar Cancelar, Esc o clic afuera: cierra el diálogo
+  cancelarEliminar(): void {
+    this.eliminando = null;
+  }
+
+  // 3. Al presionar "Sí, eliminar": elimina de verdad
+  confirmarEliminar(): void {
+    if (!this.eliminando) return;
+    this.eliminandoCargando = true;
+
+    this.asignaturaService.delete(this.eliminando.id).subscribe({
       next: () => {
+        this.eliminandoCargando = false;
+        this.eliminando = null;
+        this.mostrarToast('Asignatura eliminada', 'El registro se eliminó correctamente.');
         this.cargarAsignaturas();
       },
       error: (error) => {
-        alert(error.error?.message || 'Error al eliminar asignatura');
+        this.eliminandoCargando = false;
+        this.eliminando = null;
+        this.errorMessage = error.error?.message || 'Error al eliminar asignatura';
+        console.error('❌ Error:', error);
+        this.cdr.detectChanges();
       }
     });
   }

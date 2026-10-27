@@ -229,3 +229,89 @@ td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #f
   border-radius: 50px;
   font-weight: 6;
 }
+
+/* =========================================
+   ✅ TOAST FLOTANTE
+========================================= */
+.toast-flotante {
+  position: fixed;
+  top: 78px;
+  right: 24px;
+  z-index: 10000;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #e5e2db;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+  overflow: hidden;
+  animation: toastEntrar .3s ease;
+}
+
+.toast-check {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.toast-texto {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.toast-texto strong { font-size: 14px; color: #17181c; }
+.toast-texto span   { font-size: 12px; color: #6b6d75; }
+
+.toast-cerrar {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #9698a0;
+  cursor: pointer;
+}
+.toast-cerrar:hover { color: #17181c; }
+
+.toast-barra {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: #2e7d32;
+  animation: toastTiempo 4s linear forwards;
+}
+
+@keyframes toastEntrar {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes toastTiempo {
+  from { width: 100%; }
+  to   { width: 0; }
+}
+
+@media (max-width: 600px) {
+  .toast-flotante { top: 70px; right: 16px; left: 16px; width: auto; }
+}
+
+/* ✅ Fila que se está por eliminar */
+.fila-eliminando td {
+  background: #fdecee !important;
+}

@@ -1,47 +1,53 @@
-<div class="container">
-  <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
-    <span class="crumb-sep">/</span>
-    <button class="crumb-btn" (click)="cancelar()">Administradores</button>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">{{ isEdit ? 'Editar' : 'Nuevo' }}</span>
-  </div>
-  <div class="card">
-    
-    <div class="card-header">
-      <h4>{{ isEdit ? '✏️ Editar Administrador' : '👑 Nuevo Administrador' }}</h4>
-    </div>
-    <div class="card-body">
+<!-- src/app/features/admins/form-admin/form-admin.component.html -->
+<!-- MODAL: fondo oscuro; clic afuera = cancelar -->
+<div class="modal-overlay" (click)="cancelar()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+    <div class="card">
 
-      @if (errorMessage) {
-        <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
-      }
-      @if (successMessage) {
-        <div class="alert alert-success">✅ {{ successMessage }}</div>
-      }
+      <!-- Cabecera con botón × -->
+      <div class="card-header">
+        <h4>{{ isEdit ? '✏️ Editar Administrador' : '👑 Nuevo Administrador' }}</h4>
+        <button type="button" class="modal-close" (click)="cancelar()" title="Cerrar">×</button>
+      </div>
 
-      <form (ngSubmit)="onSubmit()">
+      <div class="card-body">
 
-        <div class="form-group">
-          <label>Usuario *</label>
-          <input type="text" class="form-control" [(ngModel)]="admin.usuario" name="usuario"
-                 [readonly]="isEdit" required>
-        </div>
+        @if (errorMessage) {
+          <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
+        }
 
-        <div class="form-group">
-          <label>Contraseña {{ isEdit ? '(dejar en blanco para no cambiar)' : '*' }}</label>
-          <input type="password" class="form-control" [(ngModel)]="admin.password" name="password"
-                 [required]="!isEdit" placeholder="Mínimo 6 caracteres">
-        </div>
+        <form (ngSubmit)="onSubmit()">
 
-        <div class="d-flex">
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
-            {{ loading ? 'Guardando...' : (isEdit ? 'Actualizar' : 'Crear Administrador') }}
-          </button>
-          <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-        </div>
+          <div class="form-group">
+            <label>Usuario *</label>
+            <input type="text" class="form-control"
+                   [(ngModel)]="admin.usuario" name="usuario"
+                   [readonly]="isEdit" required
+                   autocomplete="off" placeholder="Ej: admin@wei.edu.ec">
+          </div>
 
-      </form>
+          <div class="form-group">
+            <label>Contraseña {{ isEdit ? '(dejar en blanco para no cambiar)' : '*' }}</label>
+            <input type="password" class="form-control"
+                   [(ngModel)]="admin.password" name="password"
+                   [required]="!isEdit"
+                   autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+          </div>
+
+          <div class="d-flex">
+            <button type="button" class="btn btn-secondary" (click)="cancelar()">
+              ✕ Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              @if (loading) {
+                <span class="spinner-border"></span>
+              }
+              {{ loading ? 'Guardando...' : (isEdit ? '💾 Actualizar' : '➕ Crear') }}
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
   </div>
 </div>

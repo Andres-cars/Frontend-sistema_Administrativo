@@ -89,9 +89,15 @@ const routes: Routes = [
       },
       { path: 'horarios', component: GenerarHorarioComponent, ...soloAdmin },
       { path: 'horarios/ver/:id', component: VerHorarioComponent, ...soloAdmin },
-      { path: 'admins', component: ListaAdminsComponent, ...soloAdmin },
-      { path: 'admins/crear', component: FormAdminComponent, ...soloAdmin },
-      { path: 'admins/editar/:id', component: FormAdminComponent, ...soloAdmin }
+      {
+        path: 'admins',
+        component: ListaAdminsComponent,
+        ...soloAdmin,
+        children: [
+          { path: 'crear', component: FormAdminComponent },
+          { path: 'editar/:id', component: FormAdminComponent }
+        ]
+      }
     ]
   },
 

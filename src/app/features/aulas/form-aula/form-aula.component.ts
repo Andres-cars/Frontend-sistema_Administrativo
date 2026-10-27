@@ -58,7 +58,7 @@ export class FormAulaComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar aula';
-        this.cdr.detectChanges(); // ✅
+        this.cdr.detectChanges();
       }
     });
   }
@@ -80,31 +80,41 @@ export class FormAulaComponent implements OnInit {
     };
 
     if (this.isEdit) {
+      // ===== EDITAR =====
       this.aulaService.update(this.aula.id, data).subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = '✅ Aula actualizada correctamente';
-          this.cdr.detectChanges(); // ✅
-          setTimeout(() => this.router.navigate(['/aulas']), 2000);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/aulas'], {
+            state: {
+              successTitle: 'Aula actualizada',
+              successMessage: 'Los cambios se guardaron correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar aula';
-          this.cdr.detectChanges(); // ✅
+          this.cdr.detectChanges();
         }
       });
     } else {
+      // ===== CREAR =====
       this.aulaService.create(data).subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = '✅ Aula creada correctamente';
-          this.cdr.detectChanges(); // ✅
-          setTimeout(() => this.router.navigate(['/aulas']), 2000);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/aulas'], {
+            state: {
+              successTitle: 'Aula creada',
+              successMessage: 'El aula se registró correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al crear aula';
-          this.cdr.detectChanges(); // ✅
+          this.cdr.detectChanges();
         }
       });
     }

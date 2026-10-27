@@ -11,10 +11,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-form-carga',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './form-carga.component.html',
   styleUrls: ['./form-carga.component.css']
 })
@@ -64,7 +61,9 @@ export class FormCargaComponent implements OnInit {
   cargarDocentes(): void {
     this.docenteService.getAll().subscribe({
       next: (response) => {
-        this.docentes = response.data || [];
+        // ✅ Ordenados por apellido para encontrarlos fácil
+        this.docentes = (response.data || []).sort((a: any, b: any) =>
+          (a.apellidos || '').localeCompare(b.apellidos || '', 'es'));
         this.cdr.detectChanges();
       }
     });
@@ -73,7 +72,9 @@ export class FormCargaComponent implements OnInit {
   cargarAsignaturas(): void {
     this.asignaturaService.getAll().subscribe({
       next: (response) => {
-        this.asignaturas = response.data || [];
+        // ✅ Ordenadas por nombre
+        this.asignaturas = (response.data || []).sort((a: any, b: any) =>
+          (a.nombre || '').localeCompare(b.nombre || '', 'es'));
         this.cdr.detectChanges();
       }
     });
@@ -82,7 +83,8 @@ export class FormCargaComponent implements OnInit {
   cargarCursos(): void {
     this.cursoService.getAll().subscribe({
       next: (response) => {
-        this.cursos = response.data || [];
+        // ✅ Ordenados por ID (respeta el orden en que se crearon)
+        this.cursos = (response.data || []).sort((a: any, b: any) => a.id - b.id);
         this.cdr.detectChanges();
       }
     });
@@ -99,7 +101,7 @@ export class FormCargaComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.errorMessage = error.error?.message || 'Error al cargar carga horaria';
-        this.cdr.detectChanges(); // ✅
+        this.cdr.detectChanges();
       }
     });
   }
@@ -123,31 +125,41 @@ export class FormCargaComponent implements OnInit {
     };
 
     if (this.isEdit) {
+      // ===== EDITAR =====
       this.cargaService.update(this.carga.id, data).subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = '✅ Carga horaria actualizada correctamente';
-          this.cdr.detectChanges(); // ✅
-          setTimeout(() => this.router.navigate(['/cargas-horarias']), 2000);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/cargas-horarias'], {
+            state: {
+              successTitle: 'Carga horaria actualizada',
+              successMessage: 'Los cambios se guardaron correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al actualizar';
-          this.cdr.detectChanges(); // ✅
+          this.cdr.detectChanges();
         }
       });
     } else {
+      // ===== CREAR =====
       this.cargaService.create(data).subscribe({
         next: () => {
           this.loading = false;
-          this.successMessage = '✅ Carga horaria creada correctamente';
-          this.cdr.detectChanges(); // ✅
-          setTimeout(() => this.router.navigate(['/cargas-horarias']), 2000);
+          // ✅ Cierra el modal y manda el aviso a la lista
+          this.router.navigate(['/cargas-horarias'], {
+            state: {
+              successTitle: 'Carga horaria creada',
+              successMessage: 'La carga horaria se registró correctamente.'
+            }
+          });
         },
         error: (error) => {
           this.loading = false;
           this.errorMessage = error.error?.message || 'Error al crear';
-          this.cdr.detectChanges(); // ✅
+          this.cdr.detectChanges();
         }
       });
     }

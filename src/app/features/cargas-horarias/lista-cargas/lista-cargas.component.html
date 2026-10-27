@@ -1,11 +1,7 @@
 <!-- src/app/features/cargas-horarias/lista-cargas/lista-cargas.component.html -->
 <div class="container">
-  <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">Cargas horarias</span>
-  </div>
 
+  <!-- Header con botón -->
   <div class="d-flex">
     <h2>📋 Lista de Cargas Horarias</h2>
     @if (isAdmin) {
@@ -15,29 +11,46 @@
     }
   </div>
 
-  <!-- ✅ Toast de éxito -->
+  <!-- Buscador -->
+  <div class="buscador">
+    <input
+      type="text"
+      class="buscador-input"
+      placeholder="Buscar por docente, asignatura o curso..."
+      [(ngModel)]="filtroBusqueda"
+      name="filtroCargas">
+    @if (filtroBusqueda) {
+      <button type="button" class="buscador-clear" (click)="limpiarFiltro()" title="Limpiar">×</button>
+    }
+  </div>
+
+  <!-- Toast flotante de éxito -->
   @if (successMessage) {
-    <div class="success-toast">
-      <div class="success-icon">✓</div>
-      <div class="success-content">
-        <strong>¡Éxito!</strong>
+    <div class="toast-flotante" role="status">
+      <div class="toast-check">✓</div>
+      <div class="toast-texto">
+        <strong>{{ successTitle }}</strong>
         <span>{{ successMessage }}</span>
       </div>
-      <button type="button" class="toast-close" (click)="successMessage = ''">×</button>
+      <button type="button" class="toast-cerrar" (click)="cerrarToast()" title="Cerrar">×</button>
+      <div class="toast-barra"></div>
     </div>
   }
 
+  <!-- Error -->
   @if (errorMessage) {
     <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
   }
 
+  <!-- Loading -->
   @if (loading) {
     <div class="text-center">
       <div class="spinner-border" role="status"></div>
     </div>
   }
 
-  @if (!loading && cargas.length > 0) {
+  <!-- Tabla -->
+  @if (!loading && cargasFiltradas().length > 0) {
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -54,8 +67,9 @@
           </tr>
         </thead>
         <tbody>
-          @for (carga of cargas; track carga.id) {
-            <tr>
+          @for (carga of cargasFiltradas(); track carga.id) {
+            <!-- ✅ NUEVO: la fila se pinta si se está por eliminar -->
+            <tr [class.fila-eliminando]="eliminando?.id === carga.id">
               <td>{{ carga.id }}</td>
               <td>
                 <span class="badge bg-info">
@@ -73,7 +87,8 @@
               @if (isAdmin) {
                 <td>
                   <button (click)="irAEditar(carga.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
-                  <button (click)="eliminarCarga(carga.id)" class="btn btn-danger" title="Eliminar">🗑️</button>
+                  <!-- ✅ NUEVO: abre el diálogo en vez del confirm() -->
+                  <button (click)="pedirEliminar(carga)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
             </tr>
@@ -83,12 +98,30 @@
     </div>
   }
 
-  @if (!loading && cargas.length === 0) {
+  <!-- Sin datos (con o sin filtro) -->
+  @if (!loading && cargasFiltradas().length === 0) {
     <div class="text-center py-5">
-      <p class="text-muted">📭 No hay cargas horarias registradas</p>
+      <p class="text-muted">
+        @if (filtroBusqueda) {
+          🔍 No se encontraron cargas para "{{ filtroBusqueda }}"
+        } @else {
+          📭 No hay cargas horarias registradas
+        }
+      </p>
     </div>
   }
 
-  <!-- ✅ MODAL: aquí se dibuja el formulario encima de la lista -->
+  <!-- ✅ NUEVO: diálogo de confirmación para eliminar -->
+  @if (eliminando) {
+    <app-confirm-dialog
+      titulo="¿Eliminar esta carga horaria?"
+      [nombre]="eliminando.nombre"
+      [cargando]="eliminandoCargando"
+      (confirmar)="confirmarEliminar()"
+      (cancelar)="cancelarEliminar()">
+    </app-confirm-dialog>
+  }
+
+  <!-- MODAL: aquí se dibuja el formulario encima de la lista -->
   <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-form-admin',
   templateUrl: './form-admin.component.html',
@@ -17,13 +18,12 @@ export class FormAdminComponent implements OnInit {
   loading = false;
   errorMessage = '';
   successMessage = '';
- 
 
   constructor(
     private adminService: AdminService,
     private route: ActivatedRoute,
     private router: Router,
-     private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -31,7 +31,14 @@ export class FormAdminComponent implements OnInit {
     if (id) {
       this.isEdit = true;
       this.adminService.getById(id).subscribe({
-        next: (res) => { this.admin = res.data; },
+        next: (res) => {
+          this.admin = { ...res.data, password: '' };
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Error al cargar administrador';
+          this.cdr.detectChanges();
+        }
       });
     }
   }
@@ -62,16 +69,25 @@ export class FormAdminComponent implements OnInit {
     call.subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = '✅ Administrador guardado';
-        setTimeout(() => this.router.navigate(['/admins']), 1500);
+        // Cierra el modal y manda el aviso a la lista
+        this.router.navigate(['/admins'], {
+          state: {
+            successTitle: this.isEdit ? 'Administrador actualizado' : 'Administrador creado',
+            successMessage: this.isEdit
+              ? 'Los cambios se guardaron correctamente.'
+              : 'El administrador se registró correctamente.'
+          }
+        });
       },
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.error?.message || 'Error al guardar';
-      },
+        this.cdr.detectChanges();
+      }
     });
   }
-   irADashboard(): void {
+
+  irADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
