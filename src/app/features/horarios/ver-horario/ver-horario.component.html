@@ -8,11 +8,24 @@
     <span class="crumb-sep">/</span>
     <span class="crumb-current">{{ horario?.nombre || 'Ver' }}</span>
   </div>
-  
+
   <div class="header-actions">
-    <button class="btn btn-primary" (click)="imprimir()">
-      🖨️ Imprimir
-    </button>
+    @if (!loading && horario) {
+      <div class="export-group">
+        <button class="btn-export btn-imprimir" (click)="imprimir()" title="Imprimir horario">
+          <span class="btn-icon">🖨️</span>
+          <span class="btn-text"><strong>Imprimir</strong><small>Vista de impresión</small></span>
+        </button>
+        <button class="btn-export btn-excel" (click)="exportarExcel()" title="Descargar en Excel">
+          <span class="btn-icon">📊</span>
+          <span class="btn-text"><strong>Excel</strong><small>Descargar .xlsx</small></span>
+        </button>
+        <button class="btn-export btn-pdf" (click)="exportarPDF()" title="Descargar en PDF">
+          <span class="btn-icon">📄</span>
+          <span class="btn-text"><strong>PDF</strong><small>Descargar .pdf</small></span>
+        </button>
+      </div>
+    }
   </div>
 
   @if (loading) {
@@ -29,7 +42,10 @@
   @if (!loading && horario) {
     <div class="horario-header">
       <h2><i class="ti ti-calendar-event"></i> {{ horario.nombre }}</h2>
-      <p>Período: {{ horario.periodo_id }} | Jornada: {{ horario.jornada_id }}</p>
+      <p>
+        Período: {{ horario.periodo_id }} | Jornada: {{ horario.jornada_id }} |
+        {{ esEscuela ? 'Escuela (07:30 - 12:00)' : 'Colegio (07:30 - 13:05)' }}
+      </p>
     </div>
 
     <!-- CALENDARIO -->
@@ -44,38 +60,41 @@
           </tr>
         </thead>
         <tbody>
-          @for (hora of horas; track hora) {
-            <tr>
-              <td class="hora-cell">{{ hora }}</td>
-              @for (dia of dias; track dia) {
-                <td class="clase-cell">
-                  @if (getClase(dia, hora); as clase) {
-                    <div class="clase-card">
-                      <div class="clase-asignatura">
-                        {{ clase.carga_horaria?.asignatura?.nombre || 'Asignatura' }}
-                      </div>
-                      <div class="clase-docente">
-                        👨‍🏫 {{ clase.carga_horaria?.docente?.nombres }}
-                      </div>
-                      <div class="clase-curso">
-                        📚 {{ clase.carga_horaria?.curso?.grado }}
-                      </div>
-                      <div class="clase-aula">
-                        🏫 {{ clase.aula?.nombre }}
-                      </div>
-                    </div>
-                  }
-                </td>
-              }
-            </tr>
-            
-            <!-- ✅ FILA DEL RECREO INTERCALADA -->
-            @if (hora === '09:45') {
+          @for (fila of filas; track fila.inicio) {
+            @if (fila.recreo) {
+              <!-- FILA DEL RECREO -->
               <tr class="recreo-row">
-                <td class="hora-cell">10:30</td>
+                <td class="hora-cell">{{ fila.inicio }}</td>
                 <td class="recreo-cell" colspan="5">
-                  ☕ RECREO (10:30 - 10:50)
+                  ☕ RECREO ({{ fila.inicio }} - {{ fila.fin }})
                 </td>
+              </tr>
+            } @else {
+              <tr>
+                <td class="hora-cell">
+                  {{ fila.inicio }}<br>
+                  <small style="font-weight:400;opacity:.7">{{ fila.fin }}</small>
+                </td>
+                @for (dia of dias; track dia) {
+                  <td class="clase-cell">
+                    @if (getClase(dia, fila.inicio); as clase) {
+                      <div class="clase-card">
+                        <div class="clase-asignatura">
+                          {{ clase.carga_horaria?.asignatura?.nombre || 'Asignatura' }}
+                        </div>
+                        <div class="clase-docente">
+                          👨‍🏫 {{ clase.carga_horaria?.docente?.nombres }}
+                        </div>
+                        <div class="clase-curso">
+                          📚 {{ clase.carga_horaria?.curso?.grado }}
+                        </div>
+                        <div class="clase-aula">
+                          🏫 {{ clase.aula?.nombre }}
+                        </div>
+                      </div>
+                    }
+                  </td>
+                }
               </tr>
             }
           }
