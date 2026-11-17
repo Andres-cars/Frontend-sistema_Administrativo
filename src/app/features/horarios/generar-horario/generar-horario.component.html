@@ -34,12 +34,7 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <label>Jornada</label>
-        <select [(ngModel)]="jornadaId" class="form-control" name="jornada">
-          <option [ngValue]="1">MATUTINA (07:30 - 13:05)</option>
-        </select>
-      </div>
+      
 
       <div class="form-group">
         <label>Curso <span class="requerido">*</span></label>
@@ -52,6 +47,11 @@
             </option>
           }
         </select>
+        @if (cursoId) {
+          <small class="info-jornada">
+            {{ esColegio() ? '🏫 Colegio · 07:30 – 13:05 · recreo 10:30' : '🏠 Escuela · 07:30 – 12:00 · recreo 10:00' }}
+          </small>
+        }
       </div>
 
       <div class="form-group">
@@ -131,6 +131,46 @@
         </div>
       </div>
 
+      <!-- ✅ RB-03: AVISO DE CRUCE ENTRE SECCIONES -->
+      @if (avisos.length > 0) {
+        <div class="aviso-rb03" role="alert">
+          <div class="aviso-rb03-icono">⚠️</div>
+          <div class="aviso-rb03-texto">
+            <h4>Aviso de cruce entre secciones (RB-03)</h4>
+
+            <p>
+              {{ docentesConCruce.join(', ') }}
+              {{ docentesConCruce.length === 1 ? 'da' : 'dan' }} clases en la escuela y en el colegio.
+              {{ avisos.length === 1 ? 'Su clase se cruza' : 'Estas clases se cruzan' }}
+              con un horario de la {{ seccionLabel(avisos[0].otraSeccion) }}:
+            </p>
+
+            <ul>
+              @for (a of avisos; track $index) {
+                <li>
+                  <strong>{{ diaLabel(a.dia) }} {{ a.horaInicio }} - {{ a.horaFin }}</strong>
+                  · {{ a.curso }} ({{ seccionLabel(a.seccion) }})
+                  con {{ a.otraHoraInicio }} - {{ a.otraHoraFin }} · {{ a.otroCurso }} ({{ seccionLabel(a.otraSeccion) }})
+                  @if (docentesConCruce.length > 1) { <span class="aviso-docente">— {{ a.docente }}</span> }
+                </li>
+              }
+            </ul>
+
+            @if (resultado?.seccion === 'COLEGIO') {
+              <p class="aviso-pie">
+                Se dio prioridad al colegio. Revise el horario de
+                <strong>{{ cursosARevisar.join(', ') }}</strong> antes de publicarlo.
+              </p>
+            } @else {
+              <p class="aviso-pie">
+                El colegio tiene prioridad: estos cruces cuentan como conflictos.
+                Regenere el horario o ajuste las cargas de la escuela.
+              </p>
+            }
+          </div>
+        </div>
+      }
+
       <div class="actions">
         <button class="btn btn-success" (click)="guardarHorario()" [disabled]="guardando">
           @if (guardando) {
@@ -173,6 +213,7 @@
               <th>Nombre</th>
               <th>Período</th>
               <th>Generado</th>
+              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -189,10 +230,29 @@
                     <span class="badge badge-manual">Manual</span>
                   }
                 </td>
+                <!-- ✅ HU-13: estado de publicación -->
+                <td>
+                  @if (h.publicado) {
+                    <span class="badge badge-publicado">Publicado</span>
+                  } @else {
+                    <span class="badge badge-borrador">Borrador</span>
+                  }
+                </td>
                 <td>
                   <div class="acciones">
                     <button type="button" class="btn-ver" (click)="verHorario(h.id)" title="Ver horario">
                       <i class="ti ti-eye"></i> Ver
+                    </button>
+                    <button type="button" class="btn-publicar" [class.retirar]="h.publicado"
+                            (click)="cambiarPublicacion(h)" [disabled]="publicandoId === h.id"
+                            [title]="h.publicado ? 'Retirar: los docentes dejarán de verlo' : 'Publicar: los docentes podrán verlo'">
+                      @if (publicandoId === h.id) {
+                        <span class="spinner oscuro"></span>
+                      } @else if (h.publicado) {
+                        ⏸️ Retirar
+                      } @else {
+                        📢 Publicar
+                      }
                     </button>
                                         <button type="button" class="btn-icono" (click)="pedirEliminar(h)" title="Eliminar">🗑️</button>
                   </div>

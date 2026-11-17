@@ -19,6 +19,7 @@ import { ListaAdminsComponent } from './features/admins/lista-admins/lista-admin
 import { FormAdminComponent } from './features/admins/form-admin/form-admin.component';
 import { LayoutComponent } from './layout/layout.component'; // ✅ LAYOUT
 import { MiHorarioComponent } from './features/mi-horario/mi-horario.component';
+import { ReporteCargaComponent } from './features/reportes/reporte-carga/reporte-carga.component'; // ✅ REPORTES
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -48,6 +49,12 @@ const routes: Routes = [
         component: MiHorarioComponent,
         canActivate: [authGuard, roleGuard],
         data: { roles: ['DOCENTE'] }
+      },
+      // ✅ El admin ve el horario de un docente
+      {
+        path: 'horario-docente/:id',
+        component: MiHorarioComponent,
+        ...soloAdmin
       },
       {
         path: 'docentes',
@@ -94,6 +101,8 @@ const routes: Routes = [
           { path: 'editar/:id', component: FormCargaComponent }
         ]
       },
+      // ✅ Reporte de carga por docente (solo admin)
+      { path: 'reportes', component: ReporteCargaComponent, ...soloAdmin },
       { path: 'horarios', component: GenerarHorarioComponent, ...soloAdmin },
       { path: 'horarios/ver/:id', component: VerHorarioComponent, ...soloAdmin },
       {

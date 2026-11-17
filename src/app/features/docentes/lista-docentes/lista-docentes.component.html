@@ -89,6 +89,7 @@
               </td>
               @if (isAdmin) {
                 <td>
+                                    <button (click)="verHorario(docente.id)" class="btn btn-warning me-1" title="Ver horario">📅</button>
                   <button (click)="irAEditar(docente.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
                   <button (click)="abrirCredenciales(docente)" class="btn btn-warning me-1"
                           [title]="docente.usuario ? 'Restablecer contraseña' : 'Crear acceso'">🔑</button>

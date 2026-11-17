@@ -40,4 +40,14 @@ export class HorarioService {
   misClases(): Observable<any> {
     return this.http.get(`${this.apiUrl}/mis-clases`);
   }
+
+    // 👨‍🏫 Horario de un docente (solo admin)
+  clasesDocente(docenteId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/docente/${docenteId}`);
+  }
+  
+    // 📢 HU-13: publicar o retirar un horario
+  cambiarPublicacion(id: number, publicado: boolean): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/publicar`, { publicado });
+  }
 }

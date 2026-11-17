@@ -246,4 +246,9 @@ export class ListaDocentesComponent implements OnInit, OnDestroy {
   limpiarFiltro(): void {
     this.filtroBusqueda = '';
   }
+
+    // ✅ NUEVO: ver el horario del docente
+  verHorario(id: number): void {
+    this.router.navigate(['/horario-docente', id]);
+  }
 }

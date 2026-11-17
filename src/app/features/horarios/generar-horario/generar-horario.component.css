@@ -49,7 +49,7 @@
 /* ===== CONFIGURACIÓN ===== */
 .config-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 18px;
 }
@@ -255,3 +255,52 @@ select.form-control {
   .actions .btn { flex: 1; }
   .completitud { flex-direction: column; text-align: center; }
 }
+
+.info-jornada { display: block; margin-top: 6px; font-size: 11.5px; color: var(--texto-secundario); }
+/* =========================================
+   ✅ RB-03: AVISO DE CRUCE ENTRE SECCIONES
+========================================= */
+.aviso-rb03 {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: #fffbea;
+  border: 1px solid #f5dc8a;
+  border-left: 4px solid #e0a526;
+  animation: aparecer .25s ease;
+}
+.aviso-rb03-icono { font-size: 20px; line-height: 1.2; flex-shrink: 0; }
+.aviso-rb03-texto { flex: 1; min-width: 0; }
+.aviso-rb03-texto h4 { margin: 0 0 6px; font-size: 15px; font-weight: 700; color: #92400e; }
+.aviso-rb03-texto p { margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: #78350f; }
+.aviso-rb03-texto ul { margin: 4px 0 8px; padding-left: 20px; }
+.aviso-rb03-texto li { margin-bottom: 4px; font-size: 13px; line-height: 1.5; color: #78350f; }
+.aviso-rb03-texto li strong { color: #92400e; }
+.aviso-docente { color: #a16207; font-style: italic; }
+.aviso-rb03-texto .aviso-pie { margin: 0; font-size: 12.5px; color: #92400e; }
+
+@media (max-width: 600px) {
+  .aviso-rb03 { flex-direction: column; gap: 6px; }
+}
+
+/* =========================================
+   ✅ HU-13: PUBLICACIÓN
+========================================= */
+.badge-publicado { background: #e6f4ea; color: #166534; }
+.badge-borrador { background: #fff4d6; color: #92400e; }
+
+.btn-publicar {
+  height: 28px; padding: 0 11px;
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid #bfe5cc; border-radius: 7px;
+  background: #edf8f1; color: #166534;
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: .15s;
+  white-space: nowrap;
+}
+.btn-publicar:hover:not(:disabled) { background: #15803d; border-color: #15803d; color: #fff; }
+.btn-publicar.retirar { border-color: var(--borde); background: var(--blanco); color: var(--texto-secundario); }
+.btn-publicar.retirar:hover:not(:disabled) { border-color: #e0a526; background: #fffbea; color: #92400e; }
+.btn-publicar:disabled { opacity: .6; cursor: not-allowed; }
+.btn-publicar .spinner { width: 13px; height: 13px; }

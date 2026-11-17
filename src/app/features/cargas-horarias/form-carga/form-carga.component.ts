@@ -36,6 +36,10 @@ export class FormCargaComponent implements OnInit {
     { id: 1, nombre: 'Periodo Académico 2026-2027' }
   ];
 
+  // ✅ NUEVO: máximo de horas por docente (distributivo institucional)
+  readonly MAX_HORAS = 30;
+  private todasLasCargas: any[] = [];
+
   constructor(
     private cargaService: CargaHorariaService,
     private docenteService: DocenteService,
@@ -50,6 +54,7 @@ export class FormCargaComponent implements OnInit {
     this.cargarDocentes();
     this.cargarAsignaturas();
     this.cargarCursos();
+    this.cargarTodasLasCargas(); // ✅ NUEVO
 
     const id = this.route.snapshot.params['id'];
     if (id) {
@@ -61,7 +66,7 @@ export class FormCargaComponent implements OnInit {
   cargarDocentes(): void {
     this.docenteService.getAll().subscribe({
       next: (response) => {
-        // ✅ Ordenados por apellido para encontrarlos fácil
+        // Ordenados por apellido para encontrarlos fácil
         this.docentes = (response.data || []).sort((a: any, b: any) =>
           (a.apellidos || '').localeCompare(b.apellidos || '', 'es'));
         this.cdr.detectChanges();
@@ -70,9 +75,9 @@ export class FormCargaComponent implements OnInit {
   }
 
   cargarAsignaturas(): void {
+    // Solo trae las asignaturas ACTIVAS
     this.asignaturaService.getAll().subscribe({
       next: (response) => {
-        // ✅ Ordenadas por nombre
         this.asignaturas = (response.data || []).sort((a: any, b: any) =>
           (a.nombre || '').localeCompare(b.nombre || '', 'es'));
         this.cdr.detectChanges();
@@ -83,8 +88,17 @@ export class FormCargaComponent implements OnInit {
   cargarCursos(): void {
     this.cursoService.getAll().subscribe({
       next: (response) => {
-        // ✅ Ordenados por ID (respeta el orden en que se crearon)
         this.cursos = (response.data || []).sort((a: any, b: any) => a.id - b.id);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ✅ NUEVO: todas las cargas, para sumar las horas de cada docente
+  cargarTodasLasCargas(): void {
+    this.cargaService.getAll().subscribe({
+      next: (response) => {
+        this.todasLasCargas = response.data || [];
         this.cdr.detectChanges();
       }
     });
@@ -106,6 +120,54 @@ export class FormCargaComponent implements OnInit {
     });
   }
 
+  // =====================================================
+  // ✅ NUEVO: CÁLCULO DE HORAS DEL DOCENTE
+  // =====================================================
+
+  get docenteSeleccionado(): any {
+    return this.docentes.find(d => d.id === Number(this.carga.docente_id)) || null;
+  }
+
+  get nombreDocente(): string {
+    const d = this.docenteSeleccionado;
+    return d ? `${d.nombres} ${d.apellidos}` : '';
+  }
+
+  // Horas que el docente YA tiene en otras cargas del mismo periodo
+  get horasActuales(): number {
+    const docenteId = Number(this.carga.docente_id);
+    if (!docenteId) return 0;
+    const periodoId = Number(this.carga.periodo_id);
+
+    return this.todasLasCargas
+      .filter(c =>
+        Number(c.docente_id ?? c.docente?.id) === docenteId &&
+        Number(c.periodo_id ?? c.periodo?.id ?? periodoId) === periodoId &&
+        // Al editar, no contar dos veces esta misma carga
+        !(this.isEdit && Number(c.id) === Number(this.carga.id))
+      )
+      .reduce((suma, c) => suma + Number(c.horas_semanales || 0), 0);
+  }
+
+  get horasEstaCarga(): number {
+    return Number(this.carga.horas_semanales) || 0;
+  }
+
+  get horasTotales(): number {
+    return this.horasActuales + this.horasEstaCarga;
+  }
+
+  get superaMaximo(): boolean {
+    return !!this.carga.docente_id && this.horasTotales > this.MAX_HORAS;
+  }
+
+  get porcentajeHoras(): number {
+    return Math.min(100, Math.round((this.horasTotales / this.MAX_HORAS) * 100));
+  }
+
+  // =====================================================
+  // GUARDAR
+  // =====================================================
   onSubmit(): void {
     if (!this.carga.docente_id || !this.carga.asignatura_id || !this.carga.curso_id || !this.carga.horas_semanales) {
       this.errorMessage = 'Todos los campos son obligatorios';
@@ -124,16 +186,20 @@ export class FormCargaComponent implements OnInit {
       horas_semanales: Number(this.carga.horas_semanales)
     };
 
+    // ✅ Mensaje del toast: si supera 30 h, se guarda igual pero se avisa
+    const avisoHoras = this.superaMaximo
+      ? ` Atención: ${this.nombreDocente} queda con ${this.horasTotales} h (máximo ${this.MAX_HORAS} h).`
+      : '';
+
     if (this.isEdit) {
       // ===== EDITAR =====
       this.cargaService.update(this.carga.id, data).subscribe({
         next: () => {
           this.loading = false;
-          // ✅ Cierra el modal y manda el aviso a la lista
           this.router.navigate(['/cargas-horarias'], {
             state: {
               successTitle: 'Carga horaria actualizada',
-              successMessage: 'Los cambios se guardaron correctamente.'
+              successMessage: 'Los cambios se guardaron correctamente.' + avisoHoras
             }
           });
         },
@@ -148,11 +214,10 @@ export class FormCargaComponent implements OnInit {
       this.cargaService.create(data).subscribe({
         next: () => {
           this.loading = false;
-          // ✅ Cierra el modal y manda el aviso a la lista
           this.router.navigate(['/cargas-horarias'], {
             state: {
               successTitle: 'Carga horaria creada',
-              successMessage: 'La carga horaria se registró correctamente.'
+              successMessage: 'La carga horaria se registró correctamente.' + avisoHoras
             }
           });
         },

@@ -27,6 +27,19 @@
     }
   </div>
 
+  <!-- ✅ Filtro por estado -->
+  <div class="filtro-estado">
+    <button type="button" class="chip" [class.activo]="filtroEstado === 'todas'" (click)="filtroEstado = 'todas'">
+      Todas <span>{{ asignaturas.length }}</span>
+    </button>
+    <button type="button" class="chip" [class.activo]="filtroEstado === 'activas'" (click)="filtroEstado = 'activas'">
+      Activas <span>{{ totalActivas }}</span>
+    </button>
+    <button type="button" class="chip" [class.activo]="filtroEstado === 'inactivas'" (click)="filtroEstado = 'inactivas'">
+      Inactivas <span>{{ totalInactivas }}</span>
+    </button>
+  </div>
+
   <!-- Toast flotante de éxito -->
   @if (successMessage) {
     <div class="toast-flotante" role="status">
@@ -62,13 +75,13 @@
             <th>Nombre</th>
             <th>Código</th>
             <th>Horas Semanales</th>
+            <th>Estado</th>
             @if (isAdmin) { <th>Acciones</th> }
           </tr>
         </thead>
         <tbody>
           @for (asignatura of asignaturasFiltradas(); track asignatura.id) {
-            <!-- ✅ NUEVO: la fila se pinta si se está por eliminar -->
-            <tr [class.fila-eliminando]="eliminando?.id === asignatura.id">
+            <tr [class.fila-inactiva]="!asignatura.estado">
               <td>{{ asignatura.id }}</td>
               <td>{{ asignatura.nombre }}</td>
               <td>
@@ -77,11 +90,22 @@
               <td>
                 <span class="badge bg-primary">{{ asignatura.horas_semanales }} horas</span>
               </td>
+              <td>
+                @if (asignatura.estado) {
+                  <span class="badge-estado activa">● Activa</span>
+                } @else {
+                  <span class="badge-estado inactiva">● Inactiva</span>
+                }
+              </td>
               @if (isAdmin) {
                 <td>
                   <button (click)="irAEditar(asignatura.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
-                  <!-- ✅ NUEVO: abre el diálogo en vez del confirm() -->
-                  <button (click)="pedirEliminar(asignatura)" class="btn btn-danger" title="Eliminar">🗑️</button>
+                  <button class="btn btn-warning"
+                          (click)="cambiarEstado(asignatura)"
+                          [disabled]="cambiandoId === asignatura.id"
+                          [title]="asignatura.estado ? 'Desactivar' : 'Activar'">
+                    @if (cambiandoId === asignatura.id) { ⏳ } @else { {{ asignatura.estado ? '⏸️' : '▶️' }} }
+                  </button>
                 </td>
               }
             </tr>
@@ -91,28 +115,19 @@
     </div>
   }
 
-  <!-- Sin datos (con o sin filtro) -->
+  <!-- Sin datos -->
   @if (!loading && asignaturasFiltradas().length === 0) {
     <div class="text-center py-5">
       <p class="text-muted">
         @if (filtroBusqueda) {
           🔍 No se encontraron asignaturas para "{{ filtroBusqueda }}"
+        } @else if (filtroEstado === 'inactivas') {
+          ✅ No hay asignaturas desactivadas
         } @else {
           📭 No hay asignaturas registradas
         }
       </p>
     </div>
-  }
-
-  <!-- ✅ NUEVO: diálogo de confirmación para eliminar -->
-  @if (eliminando) {
-    <app-confirm-dialog
-      titulo="¿Eliminar esta asignatura?"
-      [nombre]="eliminando.nombre"
-      [cargando]="eliminandoCargando"
-      (confirmar)="confirmarEliminar()"
-      (cancelar)="cancelarEliminar()">
-    </app-confirm-dialog>
   }
 
   <!-- MODAL: aquí se dibuja el formulario encima de la lista -->

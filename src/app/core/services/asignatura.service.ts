@@ -11,8 +11,11 @@ export class AsignaturaService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  // 📋 Listar asignaturas
+  // getAll()     → solo activas (cargas horarias, dashboard, chat)
+  // getAll(true) → todas, también las inactivas (pantalla de Asignaturas)
+  getAll(todas: boolean = false): Observable<any> {
+    return this.http.get(this.apiUrl, todas ? { params: { todas: 'true' } } : {});
   }
 
   getById(id: number): Observable<any> {
@@ -27,6 +30,12 @@ export class AsignaturaService {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 
+  // ✅ NUEVO: activar / desactivar (no borra nada)
+  cambiarEstado(id: number, estado: boolean): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${id}/estado`, { estado });
+  }
+
+  // Se mantiene por si algún otro lugar lo usa, pero Asignaturas ya no lo llama
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }

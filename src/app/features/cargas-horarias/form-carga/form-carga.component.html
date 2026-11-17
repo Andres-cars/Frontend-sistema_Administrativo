@@ -1,10 +1,10 @@
 <!-- src/app/features/cargas-horarias/form-carga/form-carga.component.html -->
-<!-- ✅ MODAL: fondo oscuro; clic afuera = cancelar -->
+<!-- MODAL: fondo oscuro; clic afuera = cancelar -->
 <div class="modal-overlay" (click)="cancelar()">
   <div class="modal-panel" (click)="$event.stopPropagation()">
     <div class="card shadow">
 
-      <!-- ✅ MODAL: cabecera con botón × -->
+      <!-- Cabecera con botón × -->
       <div class="card-header">
         <h4>{{ isEdit ? '✏️ Editar Carga Horaria' : '➕ Nueva Carga Horaria' }}</h4>
         <button type="button" class="modal-close" (click)="cancelar()" title="Cerrar">×</button>
@@ -41,7 +41,7 @@
               <option value="">Seleccione una asignatura</option>
               @for (asignatura of asignaturas; track asignatura.id) {
                 <option [value]="asignatura.id">
-                  {{ asignatura.nombre }} ({{ asignatura.codigo }})
+                  {{ asignatura.nombre }}{{ asignatura.codigo ? ' (' + asignatura.codigo + ')' : '' }}
                 </option>
               }
             </select>
@@ -74,18 +74,50 @@
           <div class="form-group">
             <label class="form-label">Horas Semanales <span class="required">*</span></label>
             <input type="number" class="form-control"
+              [class.input-aviso]="superaMaximo"
               [(ngModel)]="carga.horas_semanales" name="horas_semanales"
               required min="1" max="20" placeholder="Ej: 5">
           </div>
 
+          <!-- ✅ NUEVO: resumen de horas del docente -->
+          @if (carga.docente_id) {
+            <div class="resumen-horas" [class.supera]="superaMaximo">
+              <div class="resumen-texto">
+                <strong>{{ nombreDocente }}</strong>
+                <span>
+                  {{ horasActuales }} h asignadas + {{ horasEstaCarga }} h de esta carga =
+                  <b>{{ horasTotales }} h</b> de {{ MAX_HORAS }} h
+                </span>
+              </div>
+              <div class="barra">
+                <span [style.width.%]="porcentajeHoras"></span>
+              </div>
+            </div>
+          }
+
+          <!-- ✅ NUEVO: aviso si supera el máximo (no bloquea) -->
+          @if (superaMaximo) {
+            <div class="aviso-horas" role="alert">
+              <span class="aviso-icono">⚠️</span>
+              <div>
+                <strong>Supera el máximo de {{ MAX_HORAS }} horas</strong>
+                <p>
+                  {{ nombreDocente }} ya tiene {{ horasActuales }} h asignadas.
+                  Con esta carga sumaría {{ horasTotales }} h semanales.
+                  Revise la distribución antes de guardar.
+                </p>
+              </div>
+            </div>
+          }
+
           <!-- Botones -->
-          <div class="d-flex gap-2 mt-4 justify-content-end">
+          <div class="d-flex">
             <button type="button" class="btn btn-secondary" (click)="cancelar()">
               ❌ Cancelar
             </button>
             <button type="submit" class="btn btn-primary" [disabled]="loading">
               @if (loading) {
-                <span class="spinner-border spinner-border-sm me-2"></span>
+                <span class="spinner-border"></span>
               }
               {{ loading ? 'Guardando...' : (isEdit ? '💾 Actualizar' : '➕ Crear') }}
             </button>

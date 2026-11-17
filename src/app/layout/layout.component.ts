@@ -60,7 +60,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
       soloAdmin: true,
       items: [
         { label: 'Cargas horarias', icono: '📅', ruta: '/cargas-horarias' },
-        { label: 'Generar horarios', icono: '🧬', ruta: '/horarios' }
+        { label: 'Generar horarios', icono: '🧬', ruta: '/horarios' },
+              { ruta: '/reportes', icono: '📊', label: 'Reportes' },
       ]
     },
     {

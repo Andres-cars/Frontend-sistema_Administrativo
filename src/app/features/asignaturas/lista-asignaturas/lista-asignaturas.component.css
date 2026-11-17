@@ -25,21 +25,6 @@
 
 .container { max-width: 1000px; margin: 0 auto; }
 
-/* Breadcrumb */
-.breadcrumb {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
-  font-size: 13px; color: var(--slate);
-}
-.crumb-btn {
-  background: none; border: none; padding: 0; cursor: pointer;
-  font-family: inherit; font-size: 13px; font-weight: 500;
-  color: var(--slate); display: flex; align-items: center; gap: 5px;
-  transition: color .15s ease;
-}
-.crumb-btn:hover { color: var(--rojo); }
-.crumb-sep { color: var(--slate-light); }
-.crumb-current { font-weight: 600; color: var(--tinta); }
-
 /* Header */
 .d-flex {
   display: flex; justify-content: space-between; align-items: center;
@@ -112,29 +97,15 @@ td .btn {
 }
 td .btn.btn-warning:hover { border-color: var(--rojo); color: var(--rojo); background: #fff; }
 td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #fff; }
+td .btn:disabled { opacity: .6; cursor: wait; }
 .me-1 { margin-right: 6px; }
 
 /* Sin datos */
 .py-5 { padding: 60px 0; }
 .text-muted { color: var(--slate-light); font-size: 14px; margin: 0; text-align: center; }
 
-/* Responsive */
-@media (max-width: 768px) {
-  :host { padding: 16px; }
-  .d-flex { flex-direction: column; align-items: stretch; }
-  .d-flex h2 { font-size: 19px; justify-content: center; }
-  .btn-primary { justify-content: center; }
-  .table { font-size: 12px; }
-  .table-responsive { padding: 14px; }
-}
-@media (max-width: 576px) {
-  .table thead th { font-size: 10.5px; }
-  .table tbody td { font-size: 11.5px; }
-  .badge { font-size: 10.5px; padding: 3px 10px; }
-}
-
 /* ============================================
-   ACCIONES DEL HEADER (BUSCADOR + BOTÓN)
+   ACCIONES DEL HEADER
    ============================================ */
 .acciones-header {
   display: flex;
@@ -143,7 +114,9 @@ td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #f
   flex-wrap: wrap;
 }
 
-/* Buscador */
+/* ============================================
+   BUSCADOR
+   ============================================ */
 .buscador {
   position: relative;
   display: flex;
@@ -193,70 +166,86 @@ td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #f
   color: var(--rojo);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .acciones-header {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .buscador-input {
-    width: 100%;
-  }
+/* ============================================
+   ✅ FILTRO POR ESTADO
+   ============================================ */
+.filtro-estado {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 14px;
 }
 
-/* ✅ Toast de éxito */
-.success-toast {
-  display: flex;
+.filtro-estado .chip {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  border-left: 5px solid #10b981;
-  color: #065f46;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin: 12px 0;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, .15);
-  animation: slideUp .25s ease;
-}
-
-.success-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #10b981;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-.success-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  font-size: 14px;
-}
-
-.toast-close {
-  background: transparent;
-  border: none;
-  font-size: 22px;
-  color: #065f46;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--linea);
+  background: #fff;
+  color: var(--slate);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
   cursor: pointer;
-  opacity: .6;
+  transition: .15s;
 }
-.toast-close:hover { opacity: 1; }
 
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: none } }
+.filtro-estado .chip span {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #f1efea;
+  font-size: 11px;
+  text-align: center;
+}
 
+.filtro-estado .chip.activo {
+  background: #1f2937;
+  border-color: #1f2937;
+  color: #fff;
+}
 
-/* =========================================
-   ✅ TOAST FLOTANTE
-========================================= */
+.filtro-estado .chip.activo span {
+  background: rgba(255, 255, 255, .18);
+}
+
+/* ============================================
+   ✅ ESTADO DE LA ASIGNATURA
+   ============================================ */
+.badge-estado {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-estado.activa {
+  background: var(--verde-tint);
+  color: var(--verde);
+}
+
+.badge-estado.inactiva {
+  background: #f0eee7;
+  color: var(--slate-light);
+}
+
+/* Fila desactivada: atenuada, pero el botón para activarla sigue funcionando */
+.fila-inactiva td {
+  color: #9698a0 !important;
+}
+
+.fila-inactiva td .badge.bg-info,
+.fila-inactiva td .badge.bg-primary {
+  opacity: .55;
+}
+
+/* ============================================
+   TOAST FLOTANTE
+   ============================================ */
 .toast-flotante {
   position: fixed;
   top: 78px;
@@ -331,11 +320,26 @@ td .btn.btn-danger:hover { border-color: #C0392B; color: #C0392B; background: #f
   to   { width: 0; }
 }
 
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  :host { padding: 16px; }
+  .d-flex { flex-direction: column; align-items: stretch; }
+  .d-flex h2 { font-size: 19px; justify-content: center; }
+  .btn-primary { justify-content: center; }
+  .table { font-size: 12px; }
+  .table-responsive { padding: 14px; }
+  .acciones-header { width: 100%; flex-direction: column; align-items: stretch; }
+  .buscador-input { width: 100%; }
+}
+
 @media (max-width: 600px) {
   .toast-flotante { top: 70px; right: 16px; left: 16px; width: auto; }
 }
 
-/* ✅ Fila que se está por eliminar */
-.fila-eliminando td {
-  background: #fdecee !important;
+@media (max-width: 576px) {
+  .table thead th { font-size: 10.5px; }
+  .table tbody td { font-size: 11.5px; }
+  .badge { font-size: 10.5px; padding: 3px 10px; }
 }

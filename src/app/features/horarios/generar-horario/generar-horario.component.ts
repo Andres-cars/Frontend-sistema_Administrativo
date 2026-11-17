@@ -44,6 +44,9 @@ export class GenerarHorarioComponent implements OnInit {
   eliminando: { id: number; nombre: string } | null = null;
   eliminandoCargando = false;
 
+  // ✅ HU-13: publicar / retirar
+  publicandoId: number | null = null;
+
   constructor(
     private horarioService: HorarioService,
     private cursoService: CursoService,
@@ -128,10 +131,14 @@ export class GenerarHorarioComponent implements OnInit {
             this.clasesFaltantes = this.resultado.clasesFaltantes || 0;
             this.horasRequeridas = this.resultado.horasRequeridas || 0;
 
+            // ✅ RB-03: cantidad de avisos entre secciones
+            const n = this.avisos.length;
+            const textoAvisos = n ? ` · ${n} ${n === 1 ? 'aviso' : 'avisos'} entre secciones` : '';
+
             if (this.completo) {
-              this.successMessage = `Horario generado correctamente (${this.resultado.fitness}% aptitud, ${this.resultado.totalClases} clases)`;
+              this.successMessage = `Horario generado correctamente (${this.resultado.fitness}% aptitud, ${this.resultado.totalClases} clases)${textoAvisos}`;
             } else {
-              this.successMessage = `Horario generado, pero FALTAN ${this.clasesFaltantes} clases (${this.resultado.fitness}%)`;
+              this.successMessage = `Horario generado, pero FALTAN ${this.clasesFaltantes} clases (${this.resultado.fitness}%)${textoAvisos}`;
             }
             this.cdr.detectChanges();
           }, tiempoEspera);
@@ -199,7 +206,7 @@ export class GenerarHorarioComponent implements OnInit {
     this.horarioService.guardar(data).subscribe({
       next: () => {
         this.guardando = false;
-        this.successMessage = 'Horario guardado correctamente';
+        this.successMessage = 'Horario guardado como borrador. Publícalo para que los docentes lo vean.';
         this.cargarHorariosGuardados();
         this.resultado = null;
         this.cursoId = null;
@@ -228,6 +235,32 @@ export class GenerarHorarioComponent implements OnInit {
       error: (error) => {
         this.cargandoHorarios = false;
         console.error('❌ Error:', error);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ===== ✅ HU-13: PUBLICAR / RETIRAR =====
+  cambiarPublicacion(h: any): void {
+    if (this.publicandoId) return;
+    const publicar = !h.publicado;
+    this.publicandoId = h.id;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.horarioService.cambiarPublicacion(h.id, publicar).subscribe({
+      next: (response: any) => {
+        this.publicandoId = null;
+        const retirados: string[] = response?.data?.retirados || [];
+        this.successMessage = publicar
+          ? `"${h.nombre}" publicado: los docentes ya pueden verlo` +
+            (retirados.length ? ` · Se retiró la versión anterior: ${retirados.join(', ')}` : '')
+          : `"${h.nombre}" retirado: vuelve a ser borrador`;
+        this.cargarHorariosGuardados();
+      },
+      error: (error) => {
+        this.publicandoId = null;
+        this.errorMessage = error.error?.message || 'Error al cambiar la publicación';
         this.cdr.detectChanges();
       }
     });
@@ -276,7 +309,40 @@ export class GenerarHorarioComponent implements OnInit {
     return 'fitness-malo';
   }
 
+  // =====================================================
+  // ✅ RB-03: AVISOS DE CRUCE ENTRE ESCUELA Y COLEGIO
+  // =====================================================
+  get avisos(): any[] {
+    return this.resultado?.avisos || [];
+  }
+
+  // Cursos de la otra sección que conviene revisar (sin repetir)
+  get cursosARevisar(): string[] {
+    return [...new Set(this.avisos.map(a => a.otroCurso).filter(Boolean))] as string[];
+  }
+
+  // Docentes involucrados (sin repetir)
+  get docentesConCruce(): string[] {
+    return [...new Set(this.avisos.map(a => a.docente).filter(Boolean))] as string[];
+  }
+
+  diaLabel(dia: string): string {
+    const nombres: Record<string, string> = {
+      LUNES: 'Lunes', MARTES: 'Martes', MIERCOLES: 'Miércoles', JUEVES: 'Jueves', VIERNES: 'Viernes'
+    };
+    return nombres[dia] || dia;
+  }
+
+  seccionLabel(seccion: string): string {
+    return seccion === 'ESCUELA' ? 'escuela' : 'colegio';
+  }
+
   irADashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  esColegio(): boolean {
+    const curso = this.cursos.find(c => c.id === Number(this.cursoId));
+    return curso?.tipo_educacion === 'BACHILLERATO' || /(8vo|9no|10mo|bgu)/i.test(curso?.grado || '');
   }
 }

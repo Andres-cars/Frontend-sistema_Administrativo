@@ -6,14 +6,13 @@ import { CommonModule } from '@angular/common';
 
 import { AsignaturaService } from '../../../core/services/asignatura.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component'; // ✅ NUEVO
 
 @Component({
   selector: 'app-lista-asignaturas',
   templateUrl: './lista-asignaturas.component.html',
   styleUrls: ['./lista-asignaturas.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterOutlet, ConfirmDialogComponent] // ✅ NUEVO
+  imports: [FormsModule, CommonModule, RouterOutlet]
 })
 export class ListaAsignaturasComponent implements OnInit, OnDestroy {
 
@@ -29,9 +28,9 @@ export class ListaAsignaturasComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   filtroBusqueda: string = '';
 
-  // ✅ NUEVO: confirmación de eliminar
-  eliminando: { id: number; nombre: string } | null = null;
-  eliminandoCargando = false;
+  // ✅ Filtro por estado y botón en proceso
+  filtroEstado: 'todas' | 'activas' | 'inactivas' = 'todas';
+  cambiandoId: number | null = null;
 
   constructor(
     private asignaturaService: AsignaturaService,
@@ -93,7 +92,8 @@ export class ListaAsignaturasComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.errorMessage = '';
 
-    this.asignaturaService.getAll().subscribe({
+    // ✅ true = también las inactivas
+    this.asignaturaService.getAll(true).subscribe({
       next: (response) => {
         this.asignaturas = (response.data || []).sort((a: any, b: any) => a.id - b.id);
         this.loading = false;
@@ -116,40 +116,28 @@ export class ListaAsignaturasComponent implements OnInit, OnDestroy {
     this.router.navigate([`/asignaturas/editar/${id}`]);
   }
 
-  // ===== ✅ NUEVO: ELIMINAR CON CONFIRMACIÓN =====
+  // ===== ✅ ACTIVAR / DESACTIVAR =====
+  cambiarEstado(asignatura: any): void {
+    if (this.cambiandoId) return;
 
-  // 1. Al presionar 🗑️: abre el diálogo
-  pedirEliminar(asignatura: any): void {
-    this.eliminando = {
-      id: asignatura.id,
-      nombre: asignatura.codigo
-        ? `${asignatura.nombre} (${asignatura.codigo})`
-        : asignatura.nombre
-    };
-  }
+    const nuevoEstado = !asignatura.estado;
+    this.cambiandoId = asignatura.id;
+    this.errorMessage = '';
 
-  // 2. Al presionar Cancelar, Esc o clic afuera: cierra el diálogo
-  cancelarEliminar(): void {
-    this.eliminando = null;
-  }
-
-  // 3. Al presionar "Sí, eliminar": elimina de verdad
-  confirmarEliminar(): void {
-    if (!this.eliminando) return;
-    this.eliminandoCargando = true;
-
-    this.asignaturaService.delete(this.eliminando.id).subscribe({
+    this.asignaturaService.cambiarEstado(asignatura.id, nuevoEstado).subscribe({
       next: () => {
-        this.eliminandoCargando = false;
-        this.eliminando = null;
-        this.mostrarToast('Asignatura eliminada', 'El registro se eliminó correctamente.');
-        this.cargarAsignaturas();
+        asignatura.estado = nuevoEstado; // se actualiza en la tabla sin recargar
+        this.cambiandoId = null;
+        this.mostrarToast(
+          nuevoEstado ? 'Asignatura activada' : 'Asignatura desactivada',
+          nuevoEstado
+            ? `"${asignatura.nombre}" vuelve a estar disponible para las cargas horarias.`
+            : `"${asignatura.nombre}" ya no se usará en nuevas cargas ni en los horarios.`
+        );
       },
       error: (error) => {
-        this.eliminandoCargando = false;
-        this.eliminando = null;
-        this.errorMessage = error.error?.message || 'Error al eliminar asignatura';
-        console.error('❌ Error:', error);
+        this.cambiandoId = null;
+        this.errorMessage = error.error?.message || 'No se pudo cambiar el estado de la asignatura';
         this.cdr.detectChanges();
       }
     });
@@ -159,10 +147,24 @@ export class ListaAsignaturasComponent implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard']);
   }
 
+  // ✅ Contadores para el filtro
+  get totalActivas(): number {
+    return this.asignaturas.filter(a => a.estado).length;
+  }
+
+  get totalInactivas(): number {
+    return this.asignaturas.filter(a => !a.estado).length;
+  }
+
   asignaturasFiltradas(): any[] {
-    if (!this.filtroBusqueda) return this.asignaturas;
+    let lista = this.asignaturas;
+
+    if (this.filtroEstado === 'activas') lista = lista.filter(a => a.estado);
+    if (this.filtroEstado === 'inactivas') lista = lista.filter(a => !a.estado);
+
+    if (!this.filtroBusqueda) return lista;
     const q = this.filtroBusqueda.toLowerCase().trim();
-    return this.asignaturas.filter(a =>
+    return lista.filter(a =>
       (a.nombre || '').toLowerCase().includes(q) ||
       (a.codigo || '').toLowerCase().includes(q)
     );

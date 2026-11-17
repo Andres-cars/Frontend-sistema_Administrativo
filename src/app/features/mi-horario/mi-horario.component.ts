@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute  } from '@angular/router';
 
 import { Workbook } from 'exceljs';                 // ✅ EXPORTAR
 import { jsPDF } from 'jspdf';                      // ✅ EXPORTAR
@@ -54,6 +54,11 @@ export class MiHorarioComponent implements OnInit, OnDestroy {
   // ✅ EXPORTAR: qué se está generando ahora
   exportando: 'excel' | 'pdf' | null = null;
 
+  docenteIdAdmin: number | null = null;
+
+  get vistaAdmin(): boolean {
+    return this.docenteIdAdmin !== null;
+  }
   dias = [
     { clave: 'LUNES', label: 'Lunes' },
     { clave: 'MARTES', label: 'Martes' },
@@ -79,10 +84,14 @@ export class MiHorarioComponent implements OnInit, OnDestroy {
   constructor(
     private horarioService: HorarioService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.docenteIdAdmin = id ? Number(id) : null;
+
     const state = this.router.getCurrentNavigation()?.extras?.state;
     if (state?.['avisoAcceso']) {
       this.mostrarAviso(state['avisoAcceso']);
@@ -99,7 +108,12 @@ export class MiHorarioComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.errorMessage = '';
 
-    this.horarioService.misClases().subscribe({
+    // Docente: su propio horario · Admin: el horario del docente elegido
+    const peticion = this.vistaAdmin
+      ? this.horarioService.clasesDocente(this.docenteIdAdmin!)
+      : this.horarioService.misClases();
+
+    peticion.subscribe({
       next: (res) => {
         const data = res.data || {};
         this.docente = data.docente || null;
@@ -112,7 +126,7 @@ export class MiHorarioComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'No se pudo cargar tu horario';
+        this.errorMessage = err.error?.message || 'No se pudo cargar el horario';
         this.cdr.detectChanges();
       }
     });
@@ -414,5 +428,10 @@ export class MiHorarioComponent implements OnInit, OnDestroy {
       this.exportando = null;
       this.cdr.detectChanges();
     }
+  }
+
+
+   volver(): void {
+    this.router.navigate(['/docentes']);
   }
 }

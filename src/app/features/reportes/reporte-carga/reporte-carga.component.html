@@ -1,0 +1,137 @@
+<!-- src/app/features/reportes/reporte-carga/reporte-carga.component.html -->
+<div class="rc">
+
+  <div class="cabecera">
+    <div>
+      <h2 class="titulo">
+        <i class="ti ti-report-analytics"></i>
+        Reporte de carga por docente
+      </h2>
+      <p class="subtitulo">Horas semanales asignadas a cada docente · máximo {{ MAX_HORAS }} h</p>
+    </div>
+
+    <div class="exportar">
+      <button type="button" class="btn btn-excel" (click)="exportarExcel()"
+              [disabled]="exportando || cargando || filas.length === 0">
+        <i class="ti ti-file-spreadsheet"></i> Excel
+      </button>
+      <button type="button" class="btn btn-pdf" (click)="exportarPDF()"
+              [disabled]="exportando || cargando || filas.length === 0">
+        <i class="ti ti-file-type-pdf"></i> PDF
+      </button>
+    </div>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">
+      <i class="ti ti-alert-triangle"></i> {{ errorMessage }}
+    </div>
+  }
+
+  <!-- ===== RESUMEN ===== -->
+  <div class="resumen">
+    <div class="tarjeta">
+      <span class="t-valor">{{ totalDocentes }}</span>
+      <span class="t-label">Docentes</span>
+    </div>
+    <div class="tarjeta">
+      <span class="t-valor">{{ totalHoras }}</span>
+      <span class="t-label">Horas asignadas</span>
+    </div>
+    <div class="tarjeta">
+      <span class="t-valor">{{ promedioHoras }}</span>
+      <span class="t-label">Promedio por docente</span>
+    </div>
+    <div class="tarjeta" [class.tarjeta-alerta]="docentesSupera > 0">
+      <span class="t-valor">{{ docentesSupera }}</span>
+      <span class="t-label">Superan {{ MAX_HORAS }} h</span>
+    </div>
+  </div>
+
+  <!-- ===== FILTROS ===== -->
+  <section class="card">
+    <div class="filtros">
+      <div class="buscador">
+        <i class="ti ti-search"></i>
+        <input type="text" [(ngModel)]="busqueda" placeholder="Buscar docente o asignatura...">
+      </div>
+
+      @if (periodos.length > 1) {
+        <select class="select" [(ngModel)]="periodoId">
+          @for (p of periodos; track p.id) {
+            <option [ngValue]="p.id">{{ p.nombre }}</option>
+          }
+        </select>
+      }
+
+      <div class="chips">
+        <button type="button" class="chip" [class.activo]="filtro === 'todos'" (click)="filtro = 'todos'">
+          Todos
+        </button>
+        <button type="button" class="chip" [class.activo]="filtro === 'supera'" (click)="filtro = 'supera'">
+          Superan {{ MAX_HORAS }} h ({{ docentesSupera }})
+        </button>
+        <button type="button" class="chip" [class.activo]="filtro === 'sin-carga'" (click)="filtro = 'sin-carga'">
+          Sin carga ({{ docentesSinCarga }})
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== TABLA ===== -->
+    @if (cargando) {
+      <div class="estado"><span class="spinner"></span> Cargando reporte...</div>
+    } @else if (filas.length === 0) {
+      <div class="estado">
+        <i class="ti ti-users-minus"></i>
+        <p>No hay docentes que coincidan con el filtro</p>
+      </div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Docente</th>
+              <th>Asignaturas y cursos</th>
+              <th class="centro">Cursos</th>
+              <th>Horas semanales</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of filas; track f.docenteId; let i = $index) {
+              <tr [class.fila-supera]="f.horas > MAX_HORAS">
+                <td class="col-id">{{ i + 1 }}</td>
+                <td>
+                  <div class="docente">{{ f.docente }}</div>
+                  @if (f.identificacion) { <small class="ident">{{ f.identificacion }}</small> }
+                </td>
+                <td>
+                  @if (f.detalles.length) {
+                    <div class="detalles">
+                      @for (d of f.detalles; track $index) {
+                        <span class="detalle">{{ d.asignatura }} · {{ d.curso }} <b>{{ d.horas }} h</b></span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="vacio">—</span>
+                  }
+                </td>
+                <td class="centro">{{ f.cursos }}</td>
+                <td>
+                  <div class="horas">
+                    <span class="horas-num">{{ f.horas }} / {{ MAX_HORAS }} h</span>
+                    <div class="barra">
+                      <div class="barra-fill" [ngClass]="estadoDe(f).clase" [style.width.%]="porcentaje(f.horas)"></div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge" [ngClass]="estadoDe(f).clase">{{ estadoDe(f).texto }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
