@@ -1,5 +1,5 @@
 // src/app/features/docentes/lista-docentes/lista-docentes.component.ts
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone  } from '@angular/core';
 import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { DocenteService } from '../../../core/services/docente.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { PasswordDialogComponent } from '../../../shared/components/password-dialog/password-dialog.component';
+import { finalize, timeout } from 'rxjs';
 // ✅ NUEVO
 
 @Component({
@@ -14,7 +16,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
   templateUrl: './lista-docentes.component.html',
   styleUrls: ['./lista-docentes.component.css'],
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterOutlet, ConfirmDialogComponent] // ✅ NUEVO
+  imports: [FormsModule, CommonModule, RouterOutlet, ConfirmDialogComponent, PasswordDialogComponent ] // ✅ NUEVO
 })
 export class ListaDocentesComponent implements OnInit, OnDestroy {
 
@@ -33,13 +35,18 @@ export class ListaDocentesComponent implements OnInit, OnDestroy {
   // ✅ NUEVO: confirmación de eliminar
   eliminando: { id: number; nombre: string } | null = null;
   eliminandoCargando = false;
-
+  // ✅ NUEVO: restablecer contraseña / crear acceso
+  credenciales: { id: number; nombre: string; usuario: string | null } | null = null;
+  credencialesCargando = false;
+  credencialesError = '';
+   credencialesResultado: { usuario: string; password: string; mensaje: string } | null = null;
   constructor(
     private docenteService: DocenteService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -152,6 +159,74 @@ export class ListaDocentesComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
+  }
+
+    // ===== ✅ NUEVO: CONTRASEÑA DEL DOCENTE =====
+  abrirCredenciales(docente: any): void {
+    this.credenciales = {
+      id: docente.id,
+      nombre: `${docente.nombres} ${docente.apellidos}`,
+      usuario: docente.usuario?.usuario || null
+    };
+    this.credencialesError = '';
+    this.credencialesResultado = null;
+  }
+
+  cerrarCredenciales(): void {
+    const resultado = this.credencialesResultado;
+    this.credenciales = null;
+    this.credencialesResultado = null;
+    this.credencialesCargando = false;
+
+    if (resultado) {
+      this.mostrarToast(
+        resultado.mensaje.replace(/[¡!]/g, ''),
+        `Usuario: ${resultado.usuario}`
+      );
+      this.cargarDocentes(); // por si se creó un usuario nuevo
+    }
+    this.cdr.detectChanges();
+  }
+
+  guardarCredenciales(datos: { usuario: string; password: string }): void {
+    if (!this.credenciales || this.credencialesCargando) return;
+
+    const teniaUsuario = !!this.credenciales.usuario;
+    this.credencialesCargando = true;
+    this.credencialesError = '';
+    this.cdr.detectChanges();
+
+    this.docenteService.resetPassword(this.credenciales.id, datos)
+      .pipe(
+        timeout(15000),
+        // ✅ Pase lo que pase (éxito, error o demora), deja de cargar
+        finalize(() => {
+          this.zone.run(() => {
+            this.credencialesCargando = false;
+            this.cdr.detectChanges();
+          });
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.zone.run(() => {
+            this.credencialesResultado = {
+              usuario: res?.data?.usuario || datos.usuario,
+              password: datos.password,
+              mensaje: teniaUsuario ? '¡Contraseña cambiada correctamente!' : '¡Acceso creado correctamente!'
+            };
+            this.cdr.detectChanges();
+          });
+        },
+        error: (err) => {
+          this.zone.run(() => {
+            this.credencialesError = err?.name === 'TimeoutError'
+              ? 'El servidor tardó demasiado en responder. Inténtalo de nuevo.'
+              : (err?.error?.message || 'No se pudo guardar la contraseña');
+            this.cdr.detectChanges();
+          });
+        }
+      });
   }
 
   irADashboard(): void {

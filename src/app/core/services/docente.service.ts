@@ -40,4 +40,9 @@ export class DocenteService {
   search(termino: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/search?termino=${termino}`);
   }
+
+    // 🔑 Restablecer contraseña o crear acceso (solo admin)
+  resetPassword(id: number, data: { usuario?: string; password: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/password`, data);
+  }
 }

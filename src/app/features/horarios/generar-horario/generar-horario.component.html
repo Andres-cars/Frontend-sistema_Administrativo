@@ -1,7 +1,9 @@
+<!-- src/app/features/horarios/generar-horario/generar-horario.component.html -->
+
+<!-- Pantalla de carga mientras corre el algoritmo -->
 @if (generando) {
   <div class="loading-overlay">
     <div class="loading-content">
-      <!-- Icono animado o Logo -->
       <div class="dna-spinner">🧬</div>
       <h3>Generando Horario...</h3>
       <p>El algoritmo genético está buscando la mejor combinación.</p>
@@ -9,36 +11,43 @@
     </div>
   </div>
 }
-<div class="container">
-   
-  <h2>🧬 Generador de Horarios</h2>
 
+<div class="gh">
 
-  <div class="card config-card">
-    <h3>⚙️ Configuración</h3>
+  <h2 class="titulo">
+    <i class="ti ti-dna-2"></i>
+    Generador de Horarios
+  </h2>
+
+  <!-- ===== CONFIGURACIÓN ===== -->
+  <section class="card">
+    <h3 class="card-titulo">
+      <i class="ti ti-adjustments-horizontal"></i>
+      Configuración
+    </h3>
 
     <div class="config-grid">
       <div class="form-group">
         <label>Período Académico</label>
-        <select [(ngModel)]="periodoId" class="form-control">
-          <option [value]="1">Periodo Académico 2026-2027</option>
+        <select [(ngModel)]="periodoId" class="form-control" name="periodo">
+          <option [ngValue]="1">Periodo Académico 2026-2027</option>
         </select>
       </div>
 
       <div class="form-group">
         <label>Jornada</label>
-        <select [(ngModel)]="jornadaId" class="form-control">
-          <option [value]="1">MATUTINA (07:30 - 13:05)</option>
+        <select [(ngModel)]="jornadaId" class="form-control" name="jornada">
+          <option [ngValue]="1">MATUTINA (07:30 - 13:05)</option>
         </select>
       </div>
 
-    
       <div class="form-group">
-        <label>Curso *</label>
-        <select [(ngModel)]="cursoId" (change)="onCursoChange()" class="form-control" required>
-          <option [value]="null">-- Seleccione un curso --</option>
+        <label>Curso <span class="requerido">*</span></label>
+        <select [(ngModel)]="cursoId" (ngModelChange)="cursoId = $event; onCursoChange()"
+                class="form-control" name="curso">
+          <option [ngValue]="null">-- Seleccione un curso --</option>
           @for (curso of cursos; track curso.id) {
-            <option [value]="curso.id">
+            <option [ngValue]="curso.id">
               {{ curso.grado }} "{{ curso.paralelo }}" - {{ curso.tipo_educacion }}
             </option>
           }
@@ -47,55 +56,49 @@
 
       <div class="form-group">
         <label>Nombre del Horario</label>
-        <input
-          type="text"
-          [(ngModel)]="nombreHorario"
-          class="form-control"
-          placeholder="Ej: Horario 8vo A"
-        >
+        <input type="text" [(ngModel)]="nombreHorario" class="form-control"
+               name="nombre" placeholder="Ej: Horario 8vo A">
       </div>
     </div>
 
-    <div class="actions">
-      <button
-        class="btn btn-primary"
-        (click)="generarHorario()"
-        [disabled]="generando"
-      >
-        @if (generando) {
-          <span class="spinner"></span>
-          Generando...
-        } @else {
-          🧬 Generar Horario
-        }
-      </button>
-    </div>
-  </div>
+    <button class="btn btn-primary" (click)="generarHorario()" [disabled]="generando">
+      @if (generando) {
+        <span class="spinner"></span> Generando...
+      } @else {
+        <i class="ti ti-dna-2"></i> Generar Horario
+      }
+    </button>
+  </section>
 
-  <!-- MENSAJES -->
+  <!-- ===== MENSAJES ===== -->
   @if (errorMessage) {
     <div class="alert alert-danger" role="alert">
-      <span class="alert-icon">⚠️</span>
+      <i class="ti ti-alert-triangle alert-icon"></i>
       <div class="alert-body">
         <span>{{ errorMessage }}</span>
         @if (faltanCargas) {
           <button type="button" class="btn btn-secondary btn-sm" (click)="irACargas()">
-            ⏰ Ir a cargas horarias
+            <i class="ti ti-clock"></i> Ir a cargas horarias
           </button>
         }
       </div>
     </div>
   }
   @if (successMessage) {
-    <div class="alert alert-success">{{ successMessage }}</div>
+    <div class="alert alert-success" [class.alert-warning]="resultado && !completo">
+      <i class="ti alert-icon" [ngClass]="resultado && !completo ? 'ti-alert-circle' : 'ti-circle-check'"></i>
+      <span>{{ successMessage }}</span>
+    </div>
   }
 
-  <!-- RESULTADO -->
+  <!-- ===== RESULTADO DEL ALGORITMO ===== -->
   @if (resultado) {
-    <div class="card resultado-card">
-      <h3>📊 Resultado del Algoritmo</h3>
+    <section class="card resultado-card">
+      <h3 class="card-titulo">
+        <i class="ti ti-chart-bar"></i>
+        Resultado del Algoritmo
+      </h3>
 
-      <!-- MÉTRICAS PRINCIPALES -->
       <div class="metrics">
         <div class="metric" [ngClass]="getFitnessClass()">
           <div class="metric-value">{{ resultado.fitness }}%</div>
@@ -115,90 +118,102 @@
         </div>
       </div>
 
-      <!-- ✅ VERIFICACIÓN DE COMPLETITUD -->
       <div class="completitud" [ngClass]="completo ? 'completo' : 'incompleto'">
-        @if (completo) {
-          <div class="completitud-icon">✅</div>
-          <div class="completitud-text">
-            <h4>Horario Completo</h4>
-            <p>Se generaron <strong>{{ resultado.totalClases }}</strong> clases de <strong>{{ horasRequeridas }}</strong> requeridas.</p>
-          </div>
-        } @else {
-          <div class="completitud-icon">⚠️</div>
-          <div class="completitud-text">
-            <h4>Horario Incompleto</h4>
-            <p>Se generaron <strong>{{ resultado.totalClases }}</strong> clases de <strong>{{ horasRequeridas }}</strong> requeridas.</p>
+        <div class="completitud-icon">
+          <i class="ti" [ngClass]="completo ? 'ti-circle-check' : 'ti-alert-triangle'"></i>
+        </div>
+        <div class="completitud-text">
+          <h4>{{ completo ? 'Horario completo' : 'Horario incompleto' }}</h4>
+          <p>Se generaron <strong>{{ resultado.totalClases }}</strong> clases de <strong>{{ horasRequeridas }}</strong> requeridas.</p>
+          @if (!completo) {
             <p><strong>Faltan {{ clasesFaltantes }} clases por asignar.</strong></p>
-          </div>
-        }
+          }
+        </div>
       </div>
 
-      <!-- ACCIONES -->
       <div class="actions">
         <button class="btn btn-success" (click)="guardarHorario()" [disabled]="guardando">
           @if (guardando) {
             <span class="spinner"></span> Guardando...
           } @else {
-            💾 Guardar Horario
+            <i class="ti ti-device-floppy"></i> Guardar Horario
           }
         </button>
-        <button class="btn btn-secondary" (click)="generarHorario()">
-          🔄 Regenerar
+        <button class="btn btn-secondary" (click)="generarHorario()" [disabled]="guardando">
+          <i class="ti ti-refresh"></i> Regenerar
         </button>
       </div>
-    </div>
+    </section>
   }
 
-  <!-- HORARIOS GUARDADOS -->
-  <div class="card">
-    <h3>📋 Horarios Guardados</h3>
+  <!-- ===== HORARIOS GUARDADOS ===== -->
+  <section class="card">
+    <h3 class="card-titulo">
+      <i class="ti ti-clipboard-list"></i>
+      Horarios Guardados
+    </h3>
 
     @if (cargandoHorarios) {
-      <div class="loading">Cargando...</div>
+      <div class="estado"><span class="spinner oscuro"></span> Cargando...</div>
     }
 
     @if (!cargandoHorarios && horariosGuardados.length === 0) {
-      <div class="empty-state">
-        <p>📭 No hay horarios guardados</p>
+      <div class="estado">
+        <i class="ti ti-calendar-off"></i>
+        <p>No hay horarios guardados</p>
       </div>
     }
 
     @if (!cargandoHorarios && horariosGuardados.length > 0) {
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Período</th>
-            <th>Generado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (h of horariosGuardados; track h.id) {
+      <div class="tabla-wrap">
+        <table class="tabla">
+          <thead>
             <tr>
-              <td>{{ h.id }}</td>
-              <td>{{ h.nombre }}</td>
-              <td>{{ h.periodo_id }}</td>
-              <td>
-                @if (h.generado_automaticamente) {
-                  <span class="badge badge-success">Automático</span>
-                } @else {
-                  <span class="badge">Manual</span>
-                }
-              </td>
-              <td>
-                <button class="btn btn-info btn-sm" (click)="verHorario(h.id)">
-                  👁️ Ver
-                </button>
-                <button class="btn btn-danger btn-sm" (click)="eliminarHorario(h.id)">
-                  🗑️
-                </button>
-              </td>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Período</th>
+              <th>Generado</th>
+              <th>Acciones</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (h of horariosGuardados; track h.id) {
+              <tr [class.fila-eliminando]="eliminando?.id === h.id">
+                <td class="col-id">{{ h.id }}</td>
+                <td>{{ h.nombre }}</td>
+                <td>{{ h.periodo?.nombre || ('Periodo ' + h.periodo_id) }}</td>
+                <td>
+                  @if (h.generado_automaticamente) {
+                    <span class="badge badge-auto">Automático</span>
+                  } @else {
+                    <span class="badge badge-manual">Manual</span>
+                  }
+                </td>
+                <td>
+                  <div class="acciones">
+                    <button type="button" class="btn-ver" (click)="verHorario(h.id)" title="Ver horario">
+                      <i class="ti ti-eye"></i> Ver
+                    </button>
+                                        <button type="button" class="btn-icono" (click)="pedirEliminar(h)" title="Eliminar">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
-  </div>
+  </section>
+
+  <!-- ✅ Confirmación de eliminar -->
+  @if (eliminando) {
+    <app-confirm-dialog
+      titulo="¿Eliminar este horario?"
+      [nombre]="eliminando.nombre"
+      mensaje="Los docentes dejarán de ver estas clases en su horario. Esta acción no se puede deshacer."
+      [cargando]="eliminandoCargando"
+      (confirmar)="confirmarEliminar()"
+      (cancelar)="cancelarEliminar()">
+    </app-confirm-dialog>
+  }
 </div>

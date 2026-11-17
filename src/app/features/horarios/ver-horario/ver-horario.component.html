@@ -1,96 +1,104 @@
 <!-- src/app/features/horarios/ver-horario/ver-horario.component.html -->
-<div class="container">
-  <!-- HEADER -->
-  <div class="breadcrumb">
-    <button class="crumb-btn" (click)="irADashboard()"><i class="ti ti-arrow-left"></i>Dashboard</button>
-    <span class="crumb-sep">/</span>
-    <button class="crumb-btn" (click)="volver()">Horarios</button>
-    <span class="crumb-sep">/</span>
-    <span class="crumb-current">{{ horario?.nombre || 'Ver' }}</span>
-  </div>
+<div class="vh">
 
-  <div class="header-actions">
-    @if (!loading && horario) {
-      <div class="export-group">
-        <button class="btn-export btn-imprimir" (click)="imprimir()" title="Imprimir horario">
-          <span class="btn-icon">🖨️</span>
-          <span class="btn-text"><strong>Imprimir</strong><small>Vista de impresión</small></span>
-        </button>
-        <button class="btn-export btn-excel" (click)="exportarExcel()" title="Descargar en Excel">
-          <span class="btn-icon">📊</span>
-          <span class="btn-text"><strong>Excel</strong><small>Descargar .xlsx</small></span>
-        </button>
-        <button class="btn-export btn-pdf" (click)="exportarPDF()" title="Descargar en PDF">
-          <span class="btn-icon">📄</span>
-          <span class="btn-text"><strong>PDF</strong><small>Descargar .pdf</small></span>
-        </button>
-      </div>
-    }
-  </div>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <button type="button" class="crumb" (click)="irADashboard()">← Dashboard</button>
+    <span class="sep">/</span>
+    <button type="button" class="crumb" (click)="irAHorarios()">Horarios</button>
+    <span class="sep">/</span>
+    <span class="actual">{{ horario?.nombre || 'Horario' }}</span>
+  </nav>
 
   @if (loading) {
-    <div class="loading">
+    <div class="estado">
       <div class="spinner"></div>
       <p>Cargando horario...</p>
     </div>
-  }
-
-  @if (errorMessage) {
-    <div class="alert alert-danger">⚠️ {{ errorMessage }}</div>
-  }
-
-  @if (!loading && horario) {
-    <div class="horario-header">
-      <h2><i class="ti ti-calendar-event"></i> {{ horario.nombre }}</h2>
-      <p>
-        Período: {{ horario.periodo_id }} | Jornada: {{ horario.jornada_id }} |
-        {{ esEscuela ? 'Escuela (07:30 - 12:00)' : 'Colegio (07:30 - 13:05)' }}
-      </p>
+  } @else if (!cursoSel) {
+    <div class="estado">
+      <p class="error">⚠️ {{ errorMessage || 'Este horario no tiene clases.' }}</p>
+      <button type="button" class="btn-volver" (click)="irAHorarios()">Volver a horarios</button>
     </div>
+  } @else {
 
-    <!-- CALENDARIO -->
-    <div class="calendar">
-      <table class="calendar-table">
+    <!-- Encabezado -->
+    <header class="vh-head">
+      <div class="vh-titulo">
+        <h1>
+          <span class="icono-cal">📅</span>
+          {{ tituloCurso(cursoSel) }}
+        </h1>
+        <p>
+          {{ subtitulo(cursoSel) }}
+          @if (cursoSel.aula) { <span class="aula-chip">🏛️ {{ cursoSel.aula }}</span> }
+        </p>
+      </div>
+
+      <div class="vh-acciones">
+        <button type="button" class="btn-accion imprimir" [disabled]="exportando !== null" (click)="imprimir()">
+          <span class="btn-ico">@if (exportando === 'imprimir') { <i class="mini-spinner"></i> } @else { 🖨️ }</span>
+          <span class="btn-txt"><strong>Imprimir</strong><small>Vista de impresión</small></span>
+        </button>
+        <button type="button" class="btn-accion excel" [disabled]="exportando !== null" (click)="exportarExcel()">
+          <span class="btn-ico">@if (exportando === 'excel') { <i class="mini-spinner"></i> } @else { 📊 }</span>
+          <span class="btn-txt"><strong>Excel</strong><small>Descargar .xlsx</small></span>
+        </button>
+        <button type="button" class="btn-accion pdf" [disabled]="exportando !== null" (click)="exportarPdf()">
+          <span class="btn-ico">@if (exportando === 'pdf') { <i class="mini-spinner"></i> } @else { 📄 }</span>
+          <span class="btn-txt"><strong>PDF</strong><small>Descargar .pdf</small></span>
+        </button>
+      </div>
+    </header>
+
+    @if (errorMessage) {
+      <div class="alerta">⚠️ {{ errorMessage }}</div>
+    }
+
+    <!-- Pestañas si el horario tiene varios cursos -->
+    @if (cursos.length > 1) {
+      <div class="tabs">
+        @for (c of cursos; track c.id) {
+          <button type="button" class="tab" [class.activa]="c === cursoSel" (click)="seleccionar(c)">
+            {{ c.nombre }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Horario -->
+    <div class="tabla-wrap">
+      <table class="grid">
         <thead>
           <tr>
-            <th class="hora-header">Hora</th>
-            @for (dia of dias; track dia) {
-              <th class="dia-header">{{ dia }}</th>
+            <th class="col-hora">HORA</th>
+            @for (d of dias; track d.clave) {
+              <th>{{ d.label | uppercase }}</th>
             }
           </tr>
         </thead>
         <tbody>
-          @for (fila of filas; track fila.inicio) {
-            @if (fila.recreo) {
-              <!-- FILA DEL RECREO -->
-              <tr class="recreo-row">
-                <td class="hora-cell">{{ fila.inicio }}</td>
-                <td class="recreo-cell" colspan="5">
-                  ☕ RECREO ({{ fila.inicio }} - {{ fila.fin }})
-                </td>
+          @for (f of cursoSel.filas; track f.inicio + f.tipo) {
+            @if (f.tipo === 'recreo') {
+              <tr class="fila-recreo">
+                <td class="col-hora"><strong>{{ f.inicio }}</strong></td>
+                <td colspan="5">☕ RECREO ({{ f.inicio }} - {{ f.fin }})</td>
               </tr>
             } @else {
               <tr>
-                <td class="hora-cell">
-                  {{ fila.inicio }}<br>
-                  <small style="font-weight:400;opacity:.7">{{ fila.fin }}</small>
+                <td class="col-hora">
+                  <strong>{{ f.inicio }}</strong>
+                  <span>{{ f.fin }}</span>
                 </td>
-                @for (dia of dias; track dia) {
-                  <td class="clase-cell">
-                    @if (getClase(dia, fila.inicio); as clase) {
-                      <div class="clase-card">
-                        <div class="clase-asignatura">
-                          {{ clase.carga_horaria?.asignatura?.nombre || 'Asignatura' }}
-                        </div>
-                        <div class="clase-docente">
-                          👨‍🏫 {{ clase.carga_horaria?.docente?.nombres }}
-                        </div>
-                        <div class="clase-curso">
-                          📚 {{ clase.carga_horaria?.curso?.grado }}
-                        </div>
-                        <div class="clase-aula">
-                          🏫 {{ clase.aula?.nombre }}
-                        </div>
+                @for (d of dias; track d.clave) {
+                  <td>
+                    @if (celda(cursoSel, d.clave, f.inicio); as c) {
+                      <div class="bloque"
+                           [style.background]="color(c.asignatura).fondo"
+                           [style.border-left-color]="color(c.asignatura).borde"
+                           [title]="c.asignatura + (c.docente ? ' · ' + c.docente : '')">
+                        <strong [style.color]="color(c.asignatura).texto">{{ c.asignatura }}</strong>
+                        <span>{{ c.docente || cursoSel.nombre }}</span>
                       </div>
                     }
                   </td>
@@ -101,5 +109,21 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Leyenda -->
+    <section class="leyenda">
+      <h3>Asignaturas de {{ cursoSel.nombre }}</h3>
+      <div class="leyenda-lista">
+        @for (l of cursoSel.leyenda; track l.asignatura) {
+          <div class="leyenda-item" [style.background]="color(l.asignatura).fondo">
+            <span class="punto" [style.background]="color(l.asignatura).borde"></span>
+            <div>
+              <strong [style.color]="color(l.asignatura).texto">{{ l.asignatura }}</strong>
+              <small>{{ l.docente || 'Sin docente' }} · {{ l.periodos }} {{ l.periodos === 1 ? 'periodo' : 'periodos' }}</small>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
   }
 </div>

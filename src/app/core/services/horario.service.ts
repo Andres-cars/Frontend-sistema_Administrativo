@@ -35,4 +35,9 @@ export class HorarioService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+    // 👨‍🏫 Mis clases (solo DOCENTE)
+  misClases(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mis-clases`);
+  }
 }

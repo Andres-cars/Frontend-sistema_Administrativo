@@ -10,21 +10,22 @@ export const roleGuard: CanActivateFn = (route) => {
   const allowedRoles = route.data?.['roles'] as string[] || [];
   const user = authService.getUsuario();
 
-  console.log('🔍 RoleGuard - Usuario:', user);
-  console.log('🔍 RoleGuard - Roles permitidos:', allowedRoles);
-
   if (!user) {
-    console.log('❌ RoleGuard - Usuario no encontrado');
     router.navigate(['/login']);
     return false;
   }
 
   if (allowedRoles.length === 0 || allowedRoles.includes(user.rol)) {
-    console.log('✅ RoleGuard - Acceso permitido');
     return true;
   }
 
-  console.log('❌ RoleGuard - Acceso denegado');
-  router.navigate(['/dashboard']);
+  // ❌ Acceso denegado: cada rol vuelve a su pantalla de inicio
+  if (user.rol === 'DOCENTE') {
+    router.navigate(['/mi-horario'], {
+      state: { avisoAcceso: 'Esa sección es solo para administradores. Te trajimos a tu horario.' }
+    });
+  } else {
+    router.navigate(['/dashboard']);
+  }
   return false;
 };

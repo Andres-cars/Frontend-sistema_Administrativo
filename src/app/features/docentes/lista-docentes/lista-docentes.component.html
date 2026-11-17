@@ -90,7 +90,8 @@
               @if (isAdmin) {
                 <td>
                   <button (click)="irAEditar(docente.id)" class="btn btn-warning me-1" title="Editar">✏️</button>
-                  <!-- ✅ NUEVO: abre el diálogo en vez del confirm() -->
+                  <button (click)="abrirCredenciales(docente)" class="btn btn-warning me-1"
+                          [title]="docente.usuario ? 'Restablecer contraseña' : 'Crear acceso'">🔑</button>
                   <button (click)="pedirEliminar(docente)" class="btn btn-danger" title="Eliminar">🗑️</button>
                 </td>
               }
@@ -124,7 +125,18 @@
       (cancelar)="cancelarEliminar()">
     </app-confirm-dialog>
   }
-
+  <!-- ✅ Restablecer contraseña / crear acceso -->
+  @if (credenciales) {
+    <app-password-dialog
+      [docente]="credenciales.nombre"
+      [usuarioActual]="credenciales.usuario"
+      [cargando]="credencialesCargando"
+      [error]="credencialesError"
+      [resultado]="credencialesResultado"
+      (guardar)="guardarCredenciales($event)"
+      (cancelar)="cerrarCredenciales()">
+    </app-password-dialog>
+  }
   <!-- MODAL: aquí se dibuja el formulario encima de la lista -->
   <router-outlet (deactivate)="alCerrarFormulario()"></router-outlet>
 </div>

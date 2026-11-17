@@ -18,6 +18,7 @@ import { VerHorarioComponent } from './features/horarios/ver-horario/ver-horario
 import { ListaAdminsComponent } from './features/admins/lista-admins/lista-admins.component';
 import { FormAdminComponent } from './features/admins/form-admin/form-admin.component';
 import { LayoutComponent } from './layout/layout.component'; // ✅ LAYOUT
+import { MiHorarioComponent } from './features/mi-horario/mi-horario.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -41,6 +42,12 @@ const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         canActivate: [authGuard]
+      },
+      {
+        path: 'mi-horario',
+        component: MiHorarioComponent,
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['DOCENTE'] }
       },
       {
         path: 'docentes',

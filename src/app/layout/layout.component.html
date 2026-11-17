@@ -1,47 +1,64 @@
 <!-- src/app/layout/layout.component.html -->
-<div class="layout" [class.sidebar-cerrado]="!sidebarAbierto" [class.movil]="esMovil">
+<div class="layout"
+     [class.sidebar-cerrado]="!sidebarAbierto"
+     [class.movil]="esMovil"
+     [class.sin-menu]="esDocente">
 
-  <!-- ===== MENÚ LATERAL ===== -->
-  <aside class="sidebar" [class.abierto]="sidebarAbierto">
-    <div class="sidebar-brand">
-      <div class="brand-logo">🎓</div>
-      <div class="brand-text">
-        <strong>Si Miao Wei Hua</strong>
-        <small>Gestión académica</small>
+  <!-- ===== MENÚ LATERAL (solo administrador) ===== -->
+  @if (!esDocente) {
+    <aside class="sidebar" [class.abierto]="sidebarAbierto">
+      <div class="sidebar-brand">
+        <div class="brand-logo">🎓</div>
+        <div class="brand-text">
+          <strong>Si Miao Wei Hua</strong>
+          <small>Gestión académica</small>
+        </div>
       </div>
-    </div>
 
-    <nav class="sidebar-nav">
-      @for (seccion of menu; track seccion.titulo) {
-        @if (!seccion.soloAdmin || esAdmin) {
-          <p class="nav-titulo">{{ seccion.titulo }}</p>
-          @for (item of seccion.items; track item.ruta) {
-            <a class="nav-item"
-               [routerLink]="item.ruta"
-               routerLinkActive="activo"
-               [routerLinkActiveOptions]="{ exact: !!item.exacto }">
-              <span class="nav-icono">{{ item.icono }}</span>
-              <span class="nav-label">{{ item.label }}</span>
-            </a>
+      <nav class="sidebar-nav">
+        @for (seccion of menu; track seccion.titulo) {
+          @if (!seccion.soloAdmin || esAdmin) {
+            <p class="nav-titulo">{{ seccion.titulo }}</p>
+            @for (item of seccion.items; track item.ruta) {
+              <a class="nav-item"
+                 [routerLink]="item.ruta"
+                 routerLinkActive="activo"
+                 [routerLinkActiveOptions]="{ exact: !!item.exacto }">
+                <span class="nav-icono">{{ item.icono }}</span>
+                <span class="nav-label">{{ item.label }}</span>
+              </a>
+            }
           }
         }
-      }
-    </nav>
+      </nav>
 
-    <div class="sidebar-footer">
-      Sistema de gestión académica · v1.0
-    </div>
-  </aside>
+      <div class="sidebar-footer">
+        Sistema de gestión académica · v1.0
+      </div>
+    </aside>
 
-  <!-- Fondo oscuro detrás del menú (solo celular) -->
-  @if (esMovil && sidebarAbierto) {
-    <div class="sidebar-backdrop" (click)="cerrarSidebar()"></div>
+    <!-- Fondo oscuro detrás del menú (solo celular) -->
+    @if (esMovil && sidebarAbierto) {
+      <div class="sidebar-backdrop" (click)="cerrarSidebar()"></div>
+    }
   }
 
   <!-- ===== ZONA PRINCIPAL ===== -->
   <div class="main">
     <header class="layout-topbar">
-      <button type="button" class="btn-menu" (click)="toggleSidebar()" title="Menú">☰</button>
+
+      @if (!esDocente) {
+        <button type="button" class="btn-menu" (click)="toggleSidebar()" title="Menú">☰</button>
+      } @else {
+        <!-- ✅ Docente: logo del colegio en lugar del botón de menú -->
+        <div class="topbar-brand">
+          <div class="brand-logo sm">🎓</div>
+          <div class="brand-text">
+            <strong>Si Miao Wei Hua</strong>
+            <small>Portal docente</small>
+          </div>
+        </div>
+      }
 
       <div class="topbar-spacer"></div>
 
@@ -53,7 +70,10 @@
       <span class="role-badge" [class.role-admin]="esAdmin" [class.role-docente]="!esAdmin">
         {{ usuario?.rol || 'USUARIO' }}
       </span>
-
+      <!-- ✅ Cambiar mi contraseña -->
+      <button type="button" class="btn-clave" (click)="mostrarCambiarPassword = true" title="Cambiar contraseña">
+        🔒 <span class="logout-text">Contraseña</span>
+      </button>
       <button type="button" class="btn-logout" (click)="logout()">
         🚪 <span class="logout-text">Salir</span>
       </button>
@@ -63,4 +83,10 @@
       <router-outlet></router-outlet>
     </main>
   </div>
+    <!-- ✅ Asistente: aparece en todas las pantallas (admin y docente) -->
+  <app-chat-asistente></app-chat-asistente>
+    <!-- ✅ Ventana para cambiar la contraseña -->
+  @if (mostrarCambiarPassword) {
+    <app-cambiar-password (cerrado)="mostrarCambiarPassword = false"></app-cambiar-password>
+  }
 </div>

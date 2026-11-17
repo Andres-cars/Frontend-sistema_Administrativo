@@ -278,3 +278,50 @@
 }
 
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+/* ===== ✅ DOCENTE: SIN MENÚ LATERAL ===== */
+.sin-menu .main {
+  margin-left: 0;
+}
+
+.sin-menu .content {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo.sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+@media (max-width: 600px) {
+  .topbar-brand .brand-text small { display: none; }
+}
+
+/* ===== ✅ BOTÓN CAMBIAR CONTRASEÑA ===== */
+.btn-clave {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--borde);
+  background: var(--blanco);
+  color: var(--texto-secundario);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-clave:hover {
+  border-color: var(--texto);
+  color: var(--texto);
+}

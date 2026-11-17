@@ -51,4 +51,9 @@ export class AuthService {
     const usuario = this.getUsuario();
     return usuario?.rol === 'DOCENTE';
   }
+
+    // 🔒 Cambiar mi propia contraseña
+  cambiarPassword(passwordActual: string, passwordNueva: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/cambiar-password`, { passwordActual, passwordNueva });
+  }
 }

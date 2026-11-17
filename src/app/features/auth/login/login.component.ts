@@ -99,7 +99,8 @@ export class LoginComponent implements OnDestroy {
             this.loading = false;
             this.refrescar();
             console.log('✅ Login exitoso:', response);
-            this.router.navigate(['/dashboard']);
+                        const rol = response?.usuario?.rol;
+            this.router.navigate([rol === 'DOCENTE' ? '/mi-horario' : '/dashboard']);
           }, tiempoRestante);
         },
         error: (error) => {

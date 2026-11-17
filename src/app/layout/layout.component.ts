@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import { AuthService } from '../core/services/auth.service';
+import { ChatAsistenteComponent } from '../shared/chat-asistente/chat-asistente.component';
+import { CambiarPasswordComponent } from '../shared/components/cambiar-password/cambiar-password.component';
 
 interface ItemMenu {
   label: string;
@@ -21,7 +23,7 @@ interface SeccionMenu {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ChatAsistenteComponent, CambiarPasswordComponent],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.css']
 })
@@ -30,14 +32,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
   usuario: any = null;
   sidebarAbierto = true;
   esMovil = false;
+    mostrarCambiarPassword = false; // ✅ NUEVO
 
   private navSub?: Subscription;
 
-  // Menú agrupado por secciones
+  // Menú agrupado por secciones (solo lo ve el administrador)
   menu: SeccionMenu[] = [
     {
       titulo: 'Principal',
-      soloAdmin: false,
+      soloAdmin: true,
       items: [
         { label: 'Dashboard', icono: '📊', ruta: '/dashboard', exacto: true }
       ]
@@ -78,7 +81,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.usuario = this.authService.getUsuario();
     this.esMovil = window.innerWidth < 992;
-    this.sidebarAbierto = !this.esMovil;
+    // ✅ El docente no tiene menú lateral
+    this.sidebarAbierto = !this.esMovil && !this.esDocente;
 
     // En celular, cerrar el menú al navegar
     this.navSub = this.router.events
@@ -101,7 +105,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const ahoraMovil = window.innerWidth < 992;
     if (ahoraMovil !== this.esMovil) {
       this.esMovil = ahoraMovil;
-      this.sidebarAbierto = !ahoraMovil;
+      this.sidebarAbierto = !ahoraMovil && !this.esDocente;
       this.cdr.detectChanges();
     }
   }
@@ -110,11 +114,17 @@ export class LayoutComponent implements OnInit, OnDestroy {
     return this.usuario?.rol === 'ADMINISTRADOR';
   }
 
+  // ✅ NUEVO
+  get esDocente(): boolean {
+    return this.usuario?.rol === 'DOCENTE';
+  }
+
   get inicial(): string {
     return (this.usuario?.usuario || 'U').charAt(0).toUpperCase();
   }
 
   toggleSidebar(): void {
+    if (this.esDocente) return;
     this.sidebarAbierto = !this.sidebarAbierto;
   }
 
