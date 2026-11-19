@@ -33,7 +33,7 @@ import { FormsModule } from '@angular/forms';
             <label>Nueva contraseña</label>
             <div class="pd-pass">
               <input class="pd-input" [type]="ver ? 'text' : 'password'" name="password"
-                     [(ngModel)]="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                     [(ngModel)]="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
               <button type="button" class="pd-mini" (click)="ver = !ver" [title]="ver ? 'Ocultar' : 'Mostrar'">
                 {{ ver ? '🙈' : '👁️' }}
               </button>
@@ -179,8 +179,8 @@ export class PasswordDialogComponent {
       this.errorLocal = 'Escribe un nombre de usuario';
       return;
     }
-    if (this.password.length < 6) {
-      this.errorLocal = 'La contraseña debe tener al menos 6 caracteres';
+    if (this.password.length < 8) {
+      this.errorLocal = 'La contraseña debe tener al menos 8 caracteres';
       return;
     }
     this.guardar.emit({ usuario: this.usuarioActual || this.usuario.trim(), password: this.password });

@@ -62,14 +62,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
         { label: 'Cargas horarias', icono: '📅', ruta: '/cargas-horarias' },
         { label: 'Generar horarios', icono: '🧬', ruta: '/horarios' },
               { ruta: '/reportes', icono: '📊', label: 'Reportes' },
-                    { ruta: '/historial', icono: '🕓', label: 'Historial de cambios' },
+                    
       ]
     },
     {
       titulo: 'Sistema',
       soloAdmin: true,
       items: [
-        { label: 'Administradores', icono: '👑', ruta: '/admins' }
+        { ruta: '/historial', icono: '🕓', label: 'Historial de cambios' },
+        { label: 'Administradores', icono: '👑', ruta: '/admins' },
+        
       ]
     }
   ];

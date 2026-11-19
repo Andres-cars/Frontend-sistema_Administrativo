@@ -34,7 +34,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <label>Nueva contraseña</label>
             <div class="cp-pass">
               <input class="cp-input" [type]="ver ? 'text' : 'password'" name="nueva"
-                     [(ngModel)]="nueva" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+                     [(ngModel)]="nueva" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
             </div>
 
             <!-- Indicador de seguridad -->
@@ -181,7 +181,7 @@ export class CambiarPasswordComponent {
     if (/\d/.test(p)) puntos++;
     if (/[^A-Za-z0-9]/.test(p)) puntos++;
 
-    if (p.length < 6) return { porcentaje: 15, color: '#dc2626', texto: 'Muy corta' };
+    if (p.length < 8) return { porcentaje: 15, color: '#dc2626', texto: 'Muy corta' };
     if (puntos <= 2) return { porcentaje: 40, color: '#ea8c1a', texto: 'Débil' };
     if (puntos <= 3) return { porcentaje: 70, color: '#ca8a04', texto: 'Aceptable' };
     return { porcentaje: 100, color: '#16a34a', texto: 'Segura' };
@@ -195,8 +195,8 @@ export class CambiarPasswordComponent {
       this.error = 'Completa los tres campos';
       return;
     }
-    if (this.nueva.length < 6) {
-      this.error = 'La nueva contraseña debe tener al menos 6 caracteres';
+    if (this.nueva.length < 8) {
+      this.error = 'La nueva contraseña debe tener al menos 8 caracteres';
       return;
     }
     if (this.nueva !== this.confirmar) {
