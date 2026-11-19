@@ -65,8 +65,14 @@ export class FormDocenteComponent implements OnInit {
       return;
     }
 
-    // Si es nuevo y se proporciona usuario, la contraseña es obligatoria
+        // Si es nuevo y se proporciona usuario, la contraseña es obligatoria
     if (!this.isEdit && this.docente.usuario && !this.docente.password) {
+      this.errorMessage = 'La contraseña es obligatoria si se crea un usuario';
+      return;
+    }
+
+    // La contraseña debe tener al menos 8 caracteres
+    if (!this.isEdit && this.docente.password && this.docente.password.length < 8) {
       this.errorMessage = 'La contraseña debe tener al menos 8 caracteres';
       return;
     }
