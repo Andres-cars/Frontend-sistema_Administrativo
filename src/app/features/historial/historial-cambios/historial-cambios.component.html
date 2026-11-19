@@ -1,0 +1,95 @@
+<!-- src/app/features/historial/historial-cambios/historial-cambios.component.html -->
+<div class="hc">
+
+  <div class="cabecera">
+    <div>
+      <h2 class="titulo">
+        <i class="ti ti-history"></i>
+        Historial de cambios
+      </h2>
+      <p class="subtitulo">Qué se cambió en las cargas horarias y en los horarios, quién lo hizo y cuándo</p>
+    </div>
+
+    <button type="button" class="btn-recargar" (click)="cargar()" [disabled]="cargando">
+      <i class="ti ti-refresh"></i> Actualizar
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">
+      <i class="ti ti-alert-triangle"></i> {{ errorMessage }}
+    </div>
+  }
+
+  <section class="card">
+    <!-- ===== FILTROS ===== -->
+    <div class="filtros">
+      <div class="buscador">
+        <i class="ti ti-search"></i>
+        <input type="text" [(ngModel)]="busqueda" placeholder="Buscar por descripción o usuario...">
+      </div>
+
+      <select class="select" [(ngModel)]="filtroAccion">
+        <option value="">Todas las acciones</option>
+        @for (a of acciones; track a) {
+          <option [value]="a">{{ accionLabel(a) }}</option>
+        }
+      </select>
+
+      <div class="chips">
+        <button type="button" class="chip" [class.activo]="filtroTabla === ''" (click)="filtroTabla = ''">
+          Todo ({{ registros.length }})
+        </button>
+        <button type="button" class="chip" [class.activo]="filtroTabla === 'cargas_horarias'" (click)="filtroTabla = 'cargas_horarias'">
+          Cargas horarias ({{ contar('cargas_horarias') }})
+        </button>
+        <button type="button" class="chip" [class.activo]="filtroTabla === 'horarios'" (click)="filtroTabla = 'horarios'">
+          Horarios ({{ contar('horarios') }})
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== TABLA ===== -->
+    @if (cargando) {
+      <div class="estado"><span class="spinner"></span> Cargando historial...</div>
+    } @else if (filtrados.length === 0) {
+      <div class="estado">
+        <i class="ti ti-history-off"></i>
+        <p>{{ registros.length ? 'No hay cambios que coincidan con el filtro' : 'Todavía no hay cambios registrados' }}</p>
+      </div>
+    } @else {
+      <div class="tabla-wrap">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Acción</th>
+              <th>Sobre</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of filtrados; track r.id) {
+              <tr>
+                <td class="col-fecha">
+                  <div>{{ r.fecha | date:'dd/MM/yyyy' }}</div>
+                  <small>{{ r.fecha | date:'HH:mm' }}</small>
+                </td>
+                <td>
+                  <span class="usuario">
+                    <span class="avatar">{{ (r.usuario?.usuario || '?').charAt(0).toUpperCase() }}</span>
+                    {{ r.usuario?.usuario || 'Desconocido' }}
+                  </span>
+                </td>
+                <td><span class="badge" [ngClass]="accionClase(r.accion)">{{ accionLabel(r.accion) }}</span></td>
+                <td class="col-tabla">{{ tablaLabel(r.tabla) }}</td>
+                <td class="col-desc">{{ r.descripcion }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

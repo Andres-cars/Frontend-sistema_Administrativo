@@ -20,6 +20,7 @@ import { FormAdminComponent } from './features/admins/form-admin/form-admin.comp
 import { LayoutComponent } from './layout/layout.component'; // ✅ LAYOUT
 import { MiHorarioComponent } from './features/mi-horario/mi-horario.component';
 import { ReporteCargaComponent } from './features/reportes/reporte-carga/reporte-carga.component'; // ✅ REPORTES
+import { HistorialCambiosComponent } from './features/historial/historial-cambios/historial-cambios.component'; // ✅ HISTORIAL
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -103,6 +104,8 @@ const routes: Routes = [
       },
       // ✅ Reporte de carga por docente (solo admin)
       { path: 'reportes', component: ReporteCargaComponent, ...soloAdmin },
+            // ✅ RN-12: Historial de cambios (solo admin)
+      { path: 'historial', component: HistorialCambiosComponent, ...soloAdmin },
       { path: 'horarios', component: GenerarHorarioComponent, ...soloAdmin },
       { path: 'horarios/ver/:id', component: VerHorarioComponent, ...soloAdmin },
       {
