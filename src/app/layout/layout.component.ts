@@ -70,6 +70,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       soloAdmin: true,
       items: [
         { ruta: '/historial', icono: '🕓', label: 'Historial de cambios' },
+              { ruta: '/periodos', icono: '📅', label: 'Periodos académicos' },
         { label: 'Administradores', icono: '👑', ruta: '/admins' },
         
       ]

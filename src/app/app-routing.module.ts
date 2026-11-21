@@ -21,6 +21,7 @@ import { LayoutComponent } from './layout/layout.component'; // ✅ LAYOUT
 import { MiHorarioComponent } from './features/mi-horario/mi-horario.component';
 import { ReporteCargaComponent } from './features/reportes/reporte-carga/reporte-carga.component'; // ✅ REPORTES
 import { HistorialCambiosComponent } from './features/historial/historial-cambios/historial-cambios.component'; // ✅ HISTORIAL
+import { ListaPeriodosComponent } from './features/periodos/lista-periodos/lista-periodos.component'; // ✅ PERIODOS
 
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -106,6 +107,8 @@ const routes: Routes = [
       { path: 'reportes', component: ReporteCargaComponent, ...soloAdmin },
             // ✅ RN-12: Historial de cambios (solo admin)
       { path: 'historial', component: HistorialCambiosComponent, ...soloAdmin },
+            // ✅ Periodos académicos (solo admin)
+      { path: 'periodos', component: ListaPeriodosComponent, ...soloAdmin },
       { path: 'horarios', component: GenerarHorarioComponent, ...soloAdmin },
       { path: 'horarios/ver/:id', component: VerHorarioComponent, ...soloAdmin },
       {

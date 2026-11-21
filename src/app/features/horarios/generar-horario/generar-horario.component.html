@@ -29,8 +29,13 @@
     <div class="config-grid">
       <div class="form-group">
         <label>Período Académico</label>
-        <select [(ngModel)]="periodoId" class="form-control" name="periodo">
-          <option [ngValue]="1">Periodo Académico 2026-2027</option>
+        <select [(ngModel)]="periodoId" (ngModelChange)="periodoId = $event; onPeriodoChange()"
+                class="form-control" name="periodo">
+          @for (p of periodos; track p.id) {
+            <option [ngValue]="p.id">{{ p.nombre }}</option>
+          } @empty {
+            <option [ngValue]="periodoId">Periodo Académico 2026-2027</option>
+          }
         </select>
       </div>
 
@@ -197,14 +202,14 @@
       <div class="estado"><span class="spinner oscuro"></span> Cargando...</div>
     }
 
-    @if (!cargandoHorarios && horariosGuardados.length === 0) {
+    @if (!cargandoHorarios && horariosDelPeriodo.length === 0) {
       <div class="estado">
         <i class="ti ti-calendar-off"></i>
         <p>No hay horarios guardados</p>
       </div>
     }
 
-    @if (!cargandoHorarios && horariosGuardados.length > 0) {
+    @if (!cargandoHorarios && horariosDelPeriodo.length > 0) {
       <div class="tabla-wrap">
         <table class="tabla">
           <thead>
@@ -218,7 +223,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (h of horariosGuardados; track h.id) {
+            @for (h of horariosDelPeriodo; track h.id) {
               <tr [class.fila-eliminando]="eliminando?.id === h.id">
                 <td class="col-id">{{ h.id }}</td>
                 <td>{{ h.nombre }}</td>

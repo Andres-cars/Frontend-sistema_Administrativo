@@ -5,6 +5,7 @@ import { CargaHorariaService } from '../../../core/services/carga-horaria.servic
 import { DocenteService } from '../../../core/services/docente.service';
 import { AsignaturaService } from '../../../core/services/asignatura.service';
 import { CursoService } from '../../../core/services/curso.service';
+import { PeriodoService } from '../../../core/services/periodo.service'; // ✅ PERIODOS
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -32,9 +33,14 @@ export class FormCargaComponent implements OnInit {
   docentes: any[] = [];
   asignaturas: any[] = [];
   cursos: any[] = [];
-  periodos: any[] = [
-    { id: 1, nombre: 'Periodo Académico 2026-2027' }
-  ];
+  // ✅ PERIODOS: se cargan de la base
+  private todosLosPeriodos: any[] = [];
+
+  // Periodos que se muestran: los activos y, al editar, también el de la carga
+  get periodos(): any[] {
+    const actual = Number(this.carga.periodo_id);
+    return this.todosLosPeriodos.filter(p => p.estado || Number(p.id) === actual);
+  }
 
   // ✅ NUEVO: máximo de horas por docente (distributivo institucional)
   readonly MAX_HORAS = 30;
@@ -45,6 +51,7 @@ export class FormCargaComponent implements OnInit {
     private docenteService: DocenteService,
     private asignaturaService: AsignaturaService,
     private cursoService: CursoService,
+    private periodoService: PeriodoService, // ✅ PERIODOS
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef
@@ -54,6 +61,7 @@ export class FormCargaComponent implements OnInit {
     this.cargarDocentes();
     this.cargarAsignaturas();
     this.cargarCursos();
+    this.cargarPeriodos(); // ✅ PERIODOS
     this.cargarTodasLasCargas(); // ✅ NUEVO
 
     const id = this.route.snapshot.params['id'];
@@ -61,6 +69,20 @@ export class FormCargaComponent implements OnInit {
       this.isEdit = true;
       this.cargarCarga(id);
     }
+  }
+
+  // ✅ PERIODOS: todos los periodos; al crear, se elige el actual (el activo más reciente)
+  cargarPeriodos(): void {
+    this.periodoService.getAll(true).subscribe({
+      next: (response: any) => {
+        this.todosLosPeriodos = response.data || [];
+        if (!this.isEdit) {
+          const actual = this.todosLosPeriodos.find(p => p.estado);
+          if (actual) this.carga.periodo_id = actual.id;
+        }
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   cargarDocentes(): void {

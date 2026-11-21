@@ -7,6 +7,7 @@ import { timeout } from 'rxjs';
 
 import { HorarioService } from '../../../core/services/horario.service';
 import { CursoService } from '../../../core/services/curso.service';
+import { PeriodoService } from '../../../core/services/periodo.service'; // ✅ PERIODOS
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';// ✅ NUEVO
 
 @Component({
@@ -19,6 +20,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 export class GenerarHorarioComponent implements OnInit {
   // Parámetros
   periodoId: number = 1;
+  periodos: any[] = []; // ✅ PERIODOS: se cargan de la base
   jornadaId: number = 1;
   cursoId: number | null = null;
   nombreHorario: string = '';
@@ -50,11 +52,13 @@ export class GenerarHorarioComponent implements OnInit {
   constructor(
     private horarioService: HorarioService,
     private cursoService: CursoService,
+    private periodoService: PeriodoService, // ✅ PERIODOS
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.cargarPeriodos(); // ✅ PERIODOS
     this.cargarCursos();
     this.cargarHorariosGuardados();
   }
@@ -73,6 +77,38 @@ export class GenerarHorarioComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  // ============================================
+  // ✅ PERIODOS: cargar los periodos activos (el actual primero)
+  // ============================================
+  cargarPeriodos(): void {
+    this.periodoService.getAll().subscribe({
+      next: (response: any) => {
+        this.periodos = response.data || [];
+        // Por defecto, el periodo actual (el activo más reciente)
+        if (this.periodos.length && !this.periodos.some(p => p.id === this.periodoId)) {
+          this.periodoId = this.periodos[0].id;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar periodos:', error);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onPeriodoChange(): void {
+    this.resultado = null;
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.faltanCargas = false;
+  }
+
+  // Solo los horarios guardados del periodo elegido
+  get horariosDelPeriodo(): any[] {
+    return this.horariosGuardados.filter(h => Number(h.periodo_id) === Number(this.periodoId));
   }
 
   // ============================================
